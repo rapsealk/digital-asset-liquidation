@@ -12,6 +12,7 @@ public class GlobalVariable {
     public static final int REQUEST_CODE_ALL        = 0x0001;
     public static final int REQUEST_CODE_CAMERA     = 0x0002;
     public static final int REQUEST_CODE_GALLERY    = 0x0003;
+    public static final int REQUEST_CODE_SIGN_IN    = 0x1001;
 
     public static final int IMAGE_CAPTURE           = 0x0001;
     public static final int READ_STORAGE            = 0x0002;

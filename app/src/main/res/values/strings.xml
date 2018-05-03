@@ -9,4 +9,11 @@
 
     <string name="description_image_asset">매물 사진</string>
     <string name="title_image_asset_source">이미지 등록</string>
+
+    <string name="detail_asset_name">자산명</string>
+    <string name="detail_build_date">제작일자</string>
+    <string name="detail_market_price">매매가</string>
+    <string name="detail_on_chain">체인 등록</string>
+    <string name="detail_owner">등록자</string>
+    <string name="detail_post_time">등록일시</string>
 </resources>

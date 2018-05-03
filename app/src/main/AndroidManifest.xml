@@ -22,10 +22,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PermissionActivity"
+        <activity android:name=".LoginActivity"/>
+        <activity
+            android:name=".PermissionActivity"
             android:theme="@style/SplashTheme" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".RegisterActivity"
+            android:windowSoftInputMode="adjustPan"/>
     </application>
 
 </manifest>

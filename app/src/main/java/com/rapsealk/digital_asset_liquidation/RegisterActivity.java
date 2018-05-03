@@ -1,16 +1,15 @@
 package com.rapsealk.digital_asset_liquidation;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.NonNull;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -23,19 +22,38 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.rapsealk.digital_asset_liquidation.schema.Asset;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private final String TAG = RegisterActivity.class.getSimpleName();
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mCurrentUser;
+    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseStorage mFirebaseStorage;
+
     private Spinner majorSpinner;
     private Spinner minorSpinner;
     private ImageView assetImage;
+    private EditText assetName, buildDate, marketPrice, etOwner;
+    private Switch switchChain;
     private Button registerButton;
 
     @Override
@@ -43,9 +61,25 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
+        if (mCurrentUser == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseStorage = FirebaseStorage.getInstance();
+
         majorSpinner = (Spinner) findViewById(R.id.spn_major);
         minorSpinner = (Spinner) findViewById(R.id.spn_minor);
         assetImage = (ImageView) findViewById(R.id.iv_asset);
+        assetName = (EditText) findViewById(R.id.et_asset_name);
+        buildDate = (EditText) findViewById(R.id.et_build_date);
+        marketPrice = (EditText) findViewById(R.id.et_market_price);
+        switchChain = (Switch) findViewById(R.id.switch_chain);
+        etOwner = (EditText) findViewById(R.id.et_owner);
         registerButton = (Button) findViewById(R.id.btn_register);
 
         ArrayAdapter majorAdapter = ArrayAdapter.createFromResource(this, R.array.major_key, R.layout.support_simple_spinner_dropdown_item);
@@ -94,10 +128,42 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         registerButton.setOnClickListener(view -> {
+            // TODO("clean")
             String majorCategory = (String) majorSpinner.getSelectedItem();
             String minorCategory = (String) minorSpinner.getSelectedItem();
+            String owner = mCurrentUser.getEmail();
+            long timestamp = System.currentTimeMillis();
+            Log.d(TAG, "====================================================================");
             Log.d(TAG, String.format("Major: %s, Minor: %s", majorCategory, minorCategory));
+            Log.d(TAG, "Asset name: " + assetName.getText().toString());
+            Log.d(TAG, "Asset build date: " + buildDate.getText().toString());
+            Log.d(TAG, "Asset price: " + marketPrice.getText().toString());
+            Log.d(TAG, "Asset on blockchain: " + switchChain.isChecked());
+            Log.d(TAG, "====================================================================");
             Toast.makeText(RegisterActivity.this, "Register button clicked.", Toast.LENGTH_SHORT).show();
+
+            Bitmap bitmap = ((BitmapDrawable) assetImage.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            mFirebaseStorage.getReference("asset").child(mCurrentUser.getUid() + "/" + timestamp)
+                    .putBytes(baos.toByteArray())
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            String url = task.getResult().getDownloadUrl().toString();
+
+                            Asset asset = new Asset(majorCategory, minorCategory, assetName.getText().toString(), buildDate.getText().toString(),
+                                    Integer.parseInt(marketPrice.getText().toString()), switchChain.isChecked(), mCurrentUser.getUid(), timestamp, url);
+
+                            mFirebaseDatabase.getReference("asset").child(mCurrentUser.getUid() + "/" + timestamp)
+                                    .setValue(asset)
+                                    .addOnCompleteListener(this, taskk -> {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
+                                    });
+                        }
+                    });
         });
     }
 
