@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">digital-asset-liquidation</string>
+
+    <string name="title_permission">권한</string>
+    <string name="description_permission">이 어플리케이션의 원활한 이용을 위하여 다음과 같은 권한이 필요합니다.</string>
+
+    <string name="btn_understood">확인</string>
+    <string name="btn_register">매물 등록하기</string>
+
+    <string name="description_image_asset">매물 사진</string>
+    <string name="title_image_asset_source">이미지 등록</string>
 </resources>

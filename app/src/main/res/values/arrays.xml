@@ -1,2 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+
+    <string-array name="major_key">
+        <item>부동산</item>
+        <item>미술품</item>
+        <item>골동품</item>
+    </string-array>
+
+    <string-array name="minor_key_real_estate">
+        <item>빌딩</item>
+        <item>상가</item>
+        <item>아파트</item>
+        <item>빌라</item>
+    </string-array>
+
+    <string-array name="minor_key_art">
+        <item>인상주의</item>
+    </string-array>
+
+    <string-array name="minor_key_antique">
+        <item>카페트</item>
+    </string-array>
+
+    <string-array name="array_image_source">
+        <item>사진 촬영하기</item>
+        <item>갤러리에서 가져오기</item>
+    </string-array>
+
+</resources>

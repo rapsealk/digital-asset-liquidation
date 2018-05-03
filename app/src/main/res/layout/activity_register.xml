@@ -6,4 +6,56 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
+    <Spinner
+        android:id="@+id/spn_major"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:entries="@array/major_key"/>
+
+    <Spinner
+        android:id="@+id/spn_minor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spn_major"/>
+
+    <ImageView
+        android:id="@+id/iv_asset"
+        android:layout_width="match_parent"
+        android:layout_height="192dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spn_minor"
+        android:padding="30dp"
+        android:contentDescription="@string/description_image_asset"
+        android:src="@android:color/darker_gray"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"/>
+
+    <GridLayout
+        android:id="@+id/gl_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_asset"
+        android:orientation="horizontal"
+        android:columnCount="2"
+        android:useDefaultMargins="true">
+
+    </GridLayout>
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/btn_register" />
+
 </android.support.constraint.ConstraintLayout>
