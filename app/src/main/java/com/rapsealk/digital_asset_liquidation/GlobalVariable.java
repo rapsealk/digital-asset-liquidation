@@ -16,4 +16,6 @@ public class GlobalVariable {
 
     public static final int IMAGE_CAPTURE           = 0x0001;
     public static final int READ_STORAGE            = 0x0002;
+
+    public static final String DATABASE_ASSET       = "asset";
 }

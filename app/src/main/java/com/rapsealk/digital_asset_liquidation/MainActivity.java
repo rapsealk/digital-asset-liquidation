@@ -45,9 +45,15 @@ public class MainActivity extends AppCompatActivity {
         // ================================================================================================
 
         Button btnRegister = (Button) findViewById(R.id.btn_register);
+        Button btnHistory = (Button) findViewById(R.id.btn_history);
 
         btnRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
+        btnHistory.setOnClickListener(view -> {
+            Intent intent = new Intent(this, MyAssetActivity.class);
             startActivity(intent);
         });
     }

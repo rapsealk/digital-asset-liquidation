@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.annotation.NonNull;
 import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -19,11 +18,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -33,12 +34,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
+import com.rapsealk.digital_asset_liquidation.schema.AssetCategory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -52,9 +51,11 @@ public class RegisterActivity extends AppCompatActivity {
     private Spinner majorSpinner;
     private Spinner minorSpinner;
     private ImageView assetImage;
-    private EditText assetName, buildDate, marketPrice, etOwner;
+    private EditText assetName, buildDate, assetPrice;
     private Switch switchChain;
     private Button registerButton;
+
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +78,11 @@ public class RegisterActivity extends AppCompatActivity {
         assetImage = (ImageView) findViewById(R.id.iv_asset);
         assetName = (EditText) findViewById(R.id.et_asset_name);
         buildDate = (EditText) findViewById(R.id.et_build_date);
-        marketPrice = (EditText) findViewById(R.id.et_market_price);
+        assetPrice = (EditText) findViewById(R.id.et_asset_price);
         switchChain = (Switch) findViewById(R.id.switch_chain);
-        etOwner = (EditText) findViewById(R.id.et_owner);
         registerButton = (Button) findViewById(R.id.btn_register);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         ArrayAdapter majorAdapter = ArrayAdapter.createFromResource(this, R.array.major_key, R.layout.support_simple_spinner_dropdown_item);
         majorSpinner.setAdapter(majorAdapter);
@@ -128,6 +130,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         registerButton.setOnClickListener(view -> {
+            setProgressBarVisibility(ProgressBar.VISIBLE);
             // TODO("clean")
             String majorCategory = (String) majorSpinner.getSelectedItem();
             String minorCategory = (String) minorSpinner.getSelectedItem();
@@ -137,10 +140,10 @@ public class RegisterActivity extends AppCompatActivity {
             Log.d(TAG, String.format("Major: %s, Minor: %s", majorCategory, minorCategory));
             Log.d(TAG, "Asset name: " + assetName.getText().toString());
             Log.d(TAG, "Asset build date: " + buildDate.getText().toString());
-            Log.d(TAG, "Asset price: " + marketPrice.getText().toString());
+            Log.d(TAG, "Asset price: " + assetPrice.getText().toString());
             Log.d(TAG, "Asset on blockchain: " + switchChain.isChecked());
             Log.d(TAG, "====================================================================");
-            Toast.makeText(RegisterActivity.this, "Register button clicked.", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(RegisterActivity.this, "Register button clicked.", Toast.LENGTH_SHORT).show();
 
             Bitmap bitmap = ((BitmapDrawable) assetImage.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -150,18 +153,23 @@ public class RegisterActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             String url = task.getResult().getDownloadUrl().toString();
-
-                            Asset asset = new Asset(majorCategory, minorCategory, assetName.getText().toString(), buildDate.getText().toString(),
-                                    Integer.parseInt(marketPrice.getText().toString()), switchChain.isChecked(), mCurrentUser.getUid(), timestamp, url);
-
+                            Asset asset = new Asset(mCurrentUser.getUid(), timestamp, url)
+                                    .setCategory(new AssetCategory(majorCategory, minorCategory))
+                                    .setName(assetName.getText().toString())
+                                    .setBuildDate(buildDate.getText().toString())
+                                    .setPrice(Integer.parseInt(assetPrice.getText().toString()))
+                                    .setOnChain(switchChain.isChecked());
                             mFirebaseDatabase.getReference("asset").child(mCurrentUser.getUid() + "/" + timestamp)
                                     .setValue(asset)
-                                    .addOnCompleteListener(this, taskk -> {
+                                    .addOnCompleteListener(this, _task -> {
+                                        setProgressBarVisibility(ProgressBar.GONE);
                                         if (task.isSuccessful()) {
                                             Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
                                             finish();
                                         }
                                     });
+                        } else {
+                            setProgressBarVisibility(ProgressBar.GONE);
                         }
                     });
         });
@@ -257,5 +265,19 @@ public class RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return path;
+    }
+
+    // TODO("customize progress bar")
+    private void setProgressBarVisibility(int visibility) {
+        switch (visibility) {
+            case ProgressBar.VISIBLE: {
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                break;
+            }
+            case ProgressBar.GONE: {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
+        }
+        mProgressBar.setVisibility(visibility);
     }
 }

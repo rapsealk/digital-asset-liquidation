@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -74,7 +75,7 @@
                 android:hint="@string/detail_build_date" />
 
             <EditText
-                android:id="@+id/et_market_price"
+                android:id="@+id/et_asset_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/et_build_date"
@@ -87,25 +88,26 @@
                 android:id="@+id/switch_chain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/et_market_price"
+                app:layout_constraintTop_toBottomOf="@id/et_asset_price"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="@string/detail_on_chain" />
 
-            <EditText
-                android:id="@+id/et_owner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/switch_chain"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:inputType="text"
-                android:hint="@string/detail_owner" />
-
-
         </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:indeterminate="true"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btn_register"
