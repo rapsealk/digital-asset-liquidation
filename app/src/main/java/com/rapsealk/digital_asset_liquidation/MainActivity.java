@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnRegister = (Button) findViewById(R.id.btn_register);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
+        Button btnSearch = (Button) findViewById(R.id.btn_search);
 
         btnRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
@@ -54,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
 
         btnHistory.setOnClickListener(view -> {
             Intent intent = new Intent(this, MyAssetActivity.class);
+            startActivity(intent);
+        });
+
+        btnSearch.setOnClickListener(view -> {
+            Intent intent = new Intent(this, SearchActivity.class);
             startActivity(intent);
         });
     }

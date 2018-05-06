@@ -134,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
             // TODO("clean")
             String majorCategory = (String) majorSpinner.getSelectedItem();
             String minorCategory = (String) minorSpinner.getSelectedItem();
-            String owner = mCurrentUser.getEmail();
+            // String owner = mCurrentUser.getEmail();
             long timestamp = System.currentTimeMillis();
             Log.d(TAG, "====================================================================");
             Log.d(TAG, String.format("Major: %s, Minor: %s", majorCategory, minorCategory));
@@ -148,7 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
             Bitmap bitmap = ((BitmapDrawable) assetImage.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            mFirebaseStorage.getReference("asset").child(mCurrentUser.getUid() + "/" + timestamp)
+            mFirebaseStorage.getReference(GlobalVariable.DATABASE_ASSET).child(mCurrentUser.getUid() + "/" + timestamp)
                     .putBytes(baos.toByteArray())
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -159,7 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     .setBuildDate(buildDate.getText().toString())
                                     .setPrice(Integer.parseInt(assetPrice.getText().toString()))
                                     .setOnChain(switchChain.isChecked());
-                            mFirebaseDatabase.getReference("asset").child(mCurrentUser.getUid() + "/" + timestamp)
+                            mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET).child(String.valueOf(timestamp))
                                     .setValue(asset)
                                     .addOnCompleteListener(this, _task -> {
                                         setProgressBarVisibility(ProgressBar.GONE);

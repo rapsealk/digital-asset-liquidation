@@ -1,6 +1,8 @@
 package com.rapsealk.digital_asset_liquidation;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,6 +33,10 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> 
         this.mItems.add(item);
     }
 
+    public void clearItems() {
+        this.mItems.clear();
+    }
+
     @Override
     public int getItemCount() {
         return this.mItems.size();
@@ -49,6 +55,12 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> 
         holder.assetName.setText(item.name);
         holder.assetPrice.setText(String.valueOf(item.price));
         Picasso.get().load(item.imageUrl).placeholder(R.color.cardview_dark_background).into(holder.assetImage);
+        holder.assetCategoryMajor.setText(item.category.major);
+        holder.assetCategoryMinor.setText(item.category.minor);
+        Drawable onChainStatus = mContext.getResources().getDrawable(R.drawable.item_circle, mContext.getApplicationContext().getTheme());
+        int colorFilter = (item.isOnChain) ? 0xFF00FF00 : 0xFFFF0000;
+        onChainStatus.mutate().setColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
+        holder.assetOnChain.setImageDrawable(onChainStatus);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,12 +68,18 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> 
         ImageView assetImage;
         TextView assetName;
         TextView assetPrice;
+        TextView assetCategoryMajor;
+        TextView assetCategoryMinor;
+        ImageView assetOnChain;
 
         public ViewHolder(View view) {
             super(view);
             assetImage = (ImageView) view.findViewById(R.id.iv_asset);
             assetName = (TextView) view.findViewById(R.id.tv_asset_name);
             assetPrice = (TextView) view.findViewById(R.id.tv_asset_price);
+            assetCategoryMajor = (TextView) view.findViewById(R.id.tv_asset_category_major);
+            assetCategoryMinor = (TextView) view.findViewById(R.id.tv_asset_category_minor);
+            assetOnChain = (ImageView) view.findViewById(R.id.iv_asset_on_chain);
         }
     }
 }

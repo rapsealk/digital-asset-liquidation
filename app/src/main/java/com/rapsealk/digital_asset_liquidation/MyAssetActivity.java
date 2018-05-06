@@ -54,14 +54,15 @@ public class MyAssetActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         setProgressBarVisibility(ProgressBar.VISIBLE);
-        mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET).child(mCurrentUser.getUid())
-                .orderByChild("timestamp")
+        mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
+                .orderByChild("orderKey")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        items.clear();
+                        adapter.clearItems();
                         for (DataSnapshot child: dataSnapshot.getChildren()) {
                             Asset asset = child.getValue(Asset.class);
+                            if (!asset.owner.equals(mCurrentUser.getUid())) continue;
                             Log.d(TAG, "asset: " + asset.imageUrl);
                             adapter.addItem(asset);
                         }

@@ -5,44 +5,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SearchActivity">
 
-    <Button
-        android:id="@+id/btn_register"
+    <Spinner
+        android:id="@+id/spn_major"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btn_history"
-        app:layout_constraintVertical_chainStyle="spread"
-        android:background="@color/colorPrimary"
-        android:text="@string/btn_register" />
+        android:entries="@array/major_key"/>
 
-    <Button
-        android:id="@+id/btn_history"
+    <Spinner
+        android:id="@+id/spn_minor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_register"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_chainStyle="spread"
-        android:background="@color/colorPrimaryDark"
-        android:text="@string/btn_history" />
+        app:layout_constraintTop_toBottomOf="@id/spn_major"/>
 
     <Button
         android:id="@+id/btn_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        app:layout_constraintTop_toBottomOf="@id/spn_minor"
+        android:text="@string/btn_search"/>
+
+    <com.rapsealk.digital_asset_liquidation.view.AnimatedRecyclerView
+        android:id="@+id/animated_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btn_search"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_history"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/colorAccent"
-        android:text="@string/btn_search" />
+        android:indeterminate="true"
+        android:visibility="gone"/>
 
 </android.support.constraint.ConstraintLayout>

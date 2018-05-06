@@ -13,7 +13,7 @@ public class Asset {
     public long timestamp;
     public String imageUrl;
 
-    // public long orderKey = -1 * timestamp;
+    public long orderKey;
 
     public Asset() {
 
@@ -23,6 +23,7 @@ public class Asset {
         this.owner = owner;
         this.timestamp = timestamp;
         this.imageUrl = imageUrl;
+        this.orderKey = -1 * timestamp;
     }
 
     public Asset setCategory(AssetCategory category) {
