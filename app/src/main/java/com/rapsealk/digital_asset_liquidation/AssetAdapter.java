@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> 
         this.mContext = context;
         this.mItems = items;
     }
-
+;
     public void addItem(Asset item) {
         this.mItems.add(item);
     }
@@ -58,7 +59,8 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> 
         holder.assetCategoryMajor.setText(item.category.major);
         holder.assetCategoryMinor.setText(item.category.minor);
         Drawable onChainStatus = mContext.getResources().getDrawable(R.drawable.item_circle, mContext.getApplicationContext().getTheme());
-        int colorFilter = (item.isOnChain) ? 0xFF00FF00 : 0xFFFF0000;
+        int colorId = (item.isOnChain) ? R.color.green : R.color.red;
+        int colorFilter = ContextCompat.getColor(mContext, colorId);
         onChainStatus.mutate().setColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
         holder.assetOnChain.setImageDrawable(onChainStatus);
     }

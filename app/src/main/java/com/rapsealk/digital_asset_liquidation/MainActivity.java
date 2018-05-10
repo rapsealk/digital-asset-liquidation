@@ -13,6 +13,8 @@ import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.rapsealk.digital_asset_liquidation.schema.User;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -20,10 +22,19 @@ import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.ECGenParameterSpec;
+import java.util.HashMap;
+
+import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mCurrentUser;
+    private FirebaseDatabase mFirebaseDatabase;
+
+    private Realm realm;
 
     private ProgressBar progressBar;
     private Button mBtnKeyGen;
@@ -33,14 +44,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
+        if (mCurrentUser == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
             return;
         }
-        Log.d(TAG, "uid: " + user.getUid());
+        Log.d(TAG, "uid: " + mCurrentUser.getUid());
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        Realm.init(getApplicationContext());
+        realm = Realm.getDefaultInstance();
 
         // Check whether permissions are granted
         // FIXME("Rx.all") ================================================================================
@@ -62,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
         Button btnRegister = (Button) findViewById(R.id.btn_register);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
         Button btnSearch = (Button) findViewById(R.id.btn_search);
+
+        User user = realm.where(User.class)
+                .equalTo("uid", mCurrentUser.getUid())
+                .findFirst();
+        if (user != null) {
+            mBtnKeyGen.setText(user.getPublicKey());
+        }
 
         // TODO("too much work on main thread")
         mBtnKeyGen.setOnClickListener(view -> {
@@ -136,7 +161,37 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String hashMessage) {
             Log.d(TAG, "SHA-256 Hash: " + hashMessage);
-            mBtnKeyGen.setText(hashMessage.substring(hashMessage.length()-20));
+            updatePublicKey(hashMessage.substring(hashMessage.length()-20));
         }
+    }
+
+    private void updatePublicKey(String publicKey) {
+        runOnUiThread(() -> setProgressBarVisibility(ProgressBar.VISIBLE));
+        HashMap<String, Object> update = new HashMap<>();
+        update.put("public_key", publicKey);
+        mFirebaseDatabase.getReference("users").child(mCurrentUser.getUid())
+                .updateChildren(update)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Realm
+                        realm.beginTransaction();
+                        String uid = mCurrentUser.getUid();
+                        User user = realm.where(User.class)
+                                .equalTo("uid", uid)
+                                .findFirst();
+                        if (user == null) {
+                            user = realm.createObject(User.class)
+                                    .setUid(uid);
+                        }
+                        user.setPublicKey(publicKey);
+                        realm.commitTransaction();
+                        mBtnKeyGen.setText(publicKey);
+                    }
+                    runOnUiThread(() -> setProgressBarVisibility(ProgressBar.GONE));
+                })
+                .addOnFailureListener(this, e -> {
+                    e.printStackTrace();
+                    runOnUiThread(() -> setProgressBarVisibility(ProgressBar.GONE));
+                });
     }
 }

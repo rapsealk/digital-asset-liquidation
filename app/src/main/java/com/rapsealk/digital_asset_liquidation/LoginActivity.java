@@ -15,6 +15,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.rapsealk.digital_asset_liquidation.schema.User;
+
+import io.realm.Realm;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -72,6 +75,8 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     setProgressBarVisibility(ProgressBar.GONE);
                     if (task.isSuccessful()) {
+                        String uid = mFirebaseAuth.getCurrentUser().getUid();
+                        updateLocalDatabase(uid);
                         Intent intent = new Intent(this, MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -90,5 +95,18 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         mProgressBar.setVisibility(visibility);
+    }
+
+    private void updateLocalDatabase(String uid) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        User user = realm.where(User.class)
+                .equalTo("uid", uid)
+                .findFirst();
+        if (user == null) {
+            user = realm.createObject(User.class)
+                    .setUid(uid);
+        }
+        realm.commitTransaction();
     }
 }
