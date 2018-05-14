@@ -62,9 +62,13 @@ public class MyAssetActivity extends AppCompatActivity {
                         adapter.clearItems();
                         for (DataSnapshot child: dataSnapshot.getChildren()) {
                             Asset asset = child.getValue(Asset.class);
-                            if (!asset.owner.equals(mCurrentUser.getUid())) continue;
-                            Log.d(TAG, "asset: " + asset.imageUrl);
-                            adapter.addItem(asset);
+                            try {
+                                if (!asset.owner.equals(mCurrentUser.getUid())) continue;
+                                Log.d(TAG, "asset: " + asset.imageUrl);
+                                adapter.addItem(asset);
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
                         }
                         adapter.notifyDataSetChanged();
                         setProgressBarVisibility(ProgressBar.GONE);

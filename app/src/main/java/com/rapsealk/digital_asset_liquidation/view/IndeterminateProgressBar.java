@@ -2,8 +2,6 @@ package com.rapsealk.digital_asset_liquidation.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 /**

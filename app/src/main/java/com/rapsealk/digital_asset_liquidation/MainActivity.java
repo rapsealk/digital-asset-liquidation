@@ -9,12 +9,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.rapsealk.digital_asset_liquidation.schema.Asset;
 import com.rapsealk.digital_asset_liquidation.schema.User;
+import com.squareup.picasso.Picasso;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageClickListener;
+import com.synnapps.carouselview.ImageListener;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -22,6 +32,7 @@ import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.ECGenParameterSpec;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.realm.Realm;
@@ -80,6 +91,34 @@ public class MainActivity extends AppCompatActivity {
         Button btnRegister = (Button) findViewById(R.id.btn_register);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
         Button btnSearch = (Button) findViewById(R.id.btn_search);
+
+        CarouselView carouselView = (CarouselView) findViewById(R.id.carousel_view);
+
+        carouselView.setPageCount(1);
+        carouselView.setImageListener(((position, imageView) -> {
+            imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
+        }));
+
+        mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
+                .orderByChild("orderKey")
+                .limitToFirst(3)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ArrayList<Asset> assets = new ArrayList<>();
+                        for (DataSnapshot child: dataSnapshot.getChildren()) {
+                            Asset asset = child.getValue(Asset.class);
+                            if (asset == null) continue;
+                            assets.add(asset);
+                        }
+                        initCarouselView(carouselView, assets);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        databaseError.toException().printStackTrace();
+                    }
+                });
 
         User user = realm.where(User.class)
                 .equalTo("uid", mCurrentUser.getUid())
@@ -193,5 +232,30 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                     runOnUiThread(() -> setProgressBarVisibility(ProgressBar.GONE));
                 });
+    }
+
+    private void initCarouselView(CarouselView view, ArrayList<Asset> assets) {
+        ImageListener imageListener = new ImageListener() {
+            @Override
+            public void setImageForPosition(int position, ImageView imageView) {
+                Asset asset = assets.get(position);
+                Picasso.get()
+                        .load(asset.imageUrl)
+                        .placeholder(R.color.cardview_dark_background)
+                        .fit()
+                        .centerCrop()
+                        .into(imageView);
+            }
+        };
+        ImageClickListener imageClickListener = new ImageClickListener() {
+            @Override
+            public void onClick(int position) {
+                Asset asset = assets.get(position);
+                Toast.makeText(MainActivity.this, "Asset: " + asset.name, Toast.LENGTH_SHORT).show();
+            }
+        };
+        view.setImageListener(imageListener);
+        view.setImageClickListener(imageClickListener);
+        view.setPageCount(assets.size());
     }
 }
