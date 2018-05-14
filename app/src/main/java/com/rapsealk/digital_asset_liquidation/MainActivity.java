@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -37,7 +36,7 @@ import java.util.HashMap;
 
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends RealmAppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
@@ -68,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
-        Realm.init(getApplicationContext());
         realm = Realm.getDefaultInstance();
 
         // Check whether permissions are granted

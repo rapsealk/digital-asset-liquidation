@@ -1,7 +1,6 @@
 package com.rapsealk.digital_asset_liquidation;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -19,7 +18,7 @@ import com.rapsealk.digital_asset_liquidation.schema.User;
 
 import io.realm.Realm;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends RealmAppCompatActivity {
 
     private final String TAG = LoginActivity.class.getSimpleName();
 
