@@ -123,6 +123,24 @@ public class MainActivity extends RealmAppCompatActivity {
                 .findFirst();
         if (user != null) {
             mBtnKeyGen.setText(user.getPublicKey());
+        } else {
+            mFirebaseDatabase.getReference(GlobalVariable.DATABASE_USERS).child(mCurrentUser.getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            realm.beginTransaction();
+                            User _user = realm.createObject(User.class);
+                            _user.copy(user);
+                            realm.commitTransaction();
+                            mBtnKeyGen.setText(user.getPublicKey());
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // TODO("not implemented")
+                        }
+                    });
         }
 
         // TODO("too much work on main thread")
@@ -250,6 +268,9 @@ public class MainActivity extends RealmAppCompatActivity {
             public void onClick(int position) {
                 Asset asset = assets.get(position);
                 Toast.makeText(MainActivity.this, "Asset: " + asset.name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, AssetActivity.class)
+                        .putExtra("asset", asset);
+                startActivity(intent);
             }
         };
         view.setImageListener(imageListener);

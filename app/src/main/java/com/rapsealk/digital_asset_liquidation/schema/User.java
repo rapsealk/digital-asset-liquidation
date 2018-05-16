@@ -41,4 +41,9 @@ public class User extends RealmObject {
         this.public_key = publicKey;
         return this;
     }
+
+    public void copy(User user) {
+        this.uid = user.uid;
+        this.public_key = user.public_key;
+    }
 }

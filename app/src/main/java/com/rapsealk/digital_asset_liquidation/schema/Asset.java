@@ -1,7 +1,10 @@
 package com.rapsealk.digital_asset_liquidation.schema;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 // TODO("Builder pattern")
-public class Asset {
+public class Asset implements Parcelable {
 
     public AssetCategory category;
 
@@ -15,6 +18,18 @@ public class Asset {
 
     public long orderKey;
 
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator<Asset>() {
+        @Override
+        public Asset createFromParcel(Parcel source) {
+            return new Asset(source);
+        }
+
+        @Override
+        public Asset[] newArray(int size) {
+            return new Asset[size];
+        }
+    };
+
     public Asset() {
 
     }
@@ -24,6 +39,18 @@ public class Asset {
         this.timestamp = timestamp;
         this.imageUrl = imageUrl;
         this.orderKey = -1 * timestamp;
+    }
+
+    public Asset(Parcel parcel) {
+        category = parcel.readParcelable(AssetCategory.class.getClassLoader());
+        name = parcel.readString();
+        buildDate = parcel.readString();
+        price = parcel.readInt();
+        isOnChain = (parcel.readByte() == 0);
+        owner = parcel.readString();
+        timestamp = parcel.readLong();
+        imageUrl = parcel.readString();
+        orderKey = parcel.readLong();
     }
 
     public Asset setCategory(AssetCategory category) {
@@ -50,8 +77,7 @@ public class Asset {
         this.isOnChain = isOnChain;
         return this;
     }
-
-    /*
+/*
     public Asset setOwner(String owner) {
         this.owner = owner;
         return this;
@@ -67,4 +93,22 @@ public class Asset {
         return this;
     }
     */
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(category, flags);
+        dest.writeString(name);
+        dest.writeString(buildDate);
+        dest.writeInt(price);
+        dest.writeByte((byte) (isOnChain ? 1 : 0));
+        dest.writeString(owner);
+        dest.writeLong(timestamp);
+        dest.writeString(imageUrl);
+        dest.writeLong(orderKey);
+    }
 }

@@ -7,6 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.synnapps.carouselview.CarouselView
+        android:id="@+id/carousel_view"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:fillColor="@color/colorPrimary"
+        app:pageColor="@color/colorAccent"
+        app:radius="6dp"
+        app:slideInterval="3000"
+        app:strokeColor="@android:color/transparent"
+        app:strokeWidth="1dp"/>
+
     <Button
         android:id="@+id/btn_keygen"
         android:layout_width="match_parent"
@@ -14,24 +28,10 @@
         android:layout_margin="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carousel_view"
         android:background="@android:color/black"
         android:textColor="@android:color/white"
         android:text="ADDRESS"/>
-
-    <com.synnapps.carouselview.CarouselView
-        android:id="@+id/carousel_view"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_keygen"
-        app:fillColor="@color/colorPrimary"
-        app:pageColor="@color/colorAccent"
-        app:radius="6dp"
-        app:slideInterval="3000"
-        app:strokeColor="#FF777777"
-        app:strokeWidth="1dp"/>
 
     <Button
         android:id="@+id/btn_register"
@@ -41,7 +41,7 @@
         android:layout_marginEnd="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/carousel_view"
+        app:layout_constraintTop_toBottomOf="@id/btn_keygen"
         app:layout_constraintBottom_toTopOf="@id/btn_history"
         app:layout_constraintVertical_chainStyle="spread"
         android:background="@color/colorPrimary"

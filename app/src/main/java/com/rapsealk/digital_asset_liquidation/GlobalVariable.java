@@ -18,4 +18,5 @@ public class GlobalVariable {
     public static final int READ_STORAGE            = 0x2002;
 
     public static final String DATABASE_ASSET       = "asset";
+    public static final String DATABASE_USERS       = "users";
 }
