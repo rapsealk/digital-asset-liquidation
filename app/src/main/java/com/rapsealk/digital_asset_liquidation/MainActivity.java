@@ -3,6 +3,7 @@ package com.rapsealk.digital_asset_liquidation;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,7 +48,7 @@ public class MainActivity extends RealmAppCompatActivity {
     private Realm realm;
 
     private ProgressBar progressBar;
-    private Button mBtnKeyGen;
+    // private Button mBtnKeyGen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,15 +86,23 @@ public class MainActivity extends RealmAppCompatActivity {
         // ================================================================================================
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        mBtnKeyGen = (Button) findViewById(R.id.btn_keygen);
-        Button btnRegister = (Button) findViewById(R.id.btn_register);
+        FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
+        FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
+        // mBtnKeyGen = (Button) findViewById(R.id.btn_keygen);
+        // Button btnRegister = (Button) findViewById(R.id.btn_register);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
-        Button btnSearch = (Button) findViewById(R.id.btn_search);
+        // Button btnSearch = (Button) findViewById(R.id.btn_search);
 
-        CarouselView carouselView = (CarouselView) findViewById(R.id.carousel_view);
+        CarouselView cvMyAssets = (CarouselView) findViewById(R.id.carousel_my_assets);
+        CarouselView cvNewAssets = (CarouselView) findViewById(R.id.carousel_new_assets);
 
-        carouselView.setPageCount(1);
-        carouselView.setImageListener(((position, imageView) -> {
+        cvMyAssets.setPageCount(1);
+        cvMyAssets.setImageListener(((position, imageView) -> {
+            imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
+        }));
+
+        cvNewAssets.setPageCount(1);
+        cvNewAssets.setImageListener(((position, imageView) -> {
             imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
         }));
 
@@ -109,7 +118,8 @@ public class MainActivity extends RealmAppCompatActivity {
                             if (asset == null) continue;
                             assets.add(asset);
                         }
-                        initCarouselView(carouselView, assets);
+                        initCarouselView(cvMyAssets, assets);
+                        initCarouselView(cvNewAssets, assets);
                     }
 
                     @Override
@@ -121,6 +131,7 @@ public class MainActivity extends RealmAppCompatActivity {
         User user = realm.where(User.class)
                 .equalTo("uid", mCurrentUser.getUid())
                 .findFirst();
+        /*
         if (user != null) {
             mBtnKeyGen.setText(user.getPublicKey());
         } else {
@@ -133,7 +144,7 @@ public class MainActivity extends RealmAppCompatActivity {
                             User _user = realm.createObject(User.class);
                             _user.copy(user);
                             realm.commitTransaction();
-                            mBtnKeyGen.setText(user.getPublicKey());
+                            // mBtnKeyGen.setText(user.getPublicKey());
                         }
 
                         @Override
@@ -142,26 +153,41 @@ public class MainActivity extends RealmAppCompatActivity {
                         }
                     });
         }
+        */
 
-        // TODO("too much work on main thread")
+        /* TODO("too much work on main thread")
         mBtnKeyGen.setOnClickListener(view -> {
             new KeyGenTask().execute();
         });
+        */
 
-        btnRegister.setOnClickListener(view -> {
+        fabRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
+        /*
+        btnRegister.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            // TODO("update recent assets")
+            startActivity(intent);
+        });
+        */
 
         btnHistory.setOnClickListener(view -> {
             Intent intent = new Intent(this, MyAssetActivity.class);
             startActivity(intent);
         });
 
+        fabSearch.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
+        /*
         btnSearch.setOnClickListener(view -> {
             Intent intent = new Intent(this, SearchActivity.class);
             startActivity(intent);
         });
+        */
     }
 
     // TODO("customize progress bar")
@@ -178,7 +204,7 @@ public class MainActivity extends RealmAppCompatActivity {
         progressBar.setVisibility(visibility);
     }
 
-    // TODO("memory leak")
+    /* TODO("memory leak")
     private class KeyGenTask extends AsyncTask<Void, Void, String> {
 
         @Override
@@ -219,7 +245,9 @@ public class MainActivity extends RealmAppCompatActivity {
             updatePublicKey(hashMessage.substring(hashMessage.length()-20));
         }
     }
+    */
 
+    /*
     private void updatePublicKey(String publicKey) {
         runOnUiThread(() -> setProgressBarVisibility(ProgressBar.VISIBLE));
         HashMap<String, Object> update = new HashMap<>();
@@ -249,6 +277,7 @@ public class MainActivity extends RealmAppCompatActivity {
                     runOnUiThread(() -> setProgressBarVisibility(ProgressBar.GONE));
                 });
     }
+    */
 
     private void initCarouselView(CarouselView view, ArrayList<Asset> assets) {
         ImageListener imageListener = new ImageListener() {
