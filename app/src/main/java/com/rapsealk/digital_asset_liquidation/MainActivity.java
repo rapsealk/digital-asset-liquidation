@@ -2,7 +2,6 @@ package com.rapsealk.digital_asset_liquidation;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
 import com.rapsealk.digital_asset_liquidation.schema.User;
 import com.squareup.picasso.Picasso;
@@ -26,15 +26,11 @@ import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
-import java.util.HashMap;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 public class MainActivity extends RealmAppCompatActivity {
@@ -65,6 +61,26 @@ public class MainActivity extends RealmAppCompatActivity {
             return;
         }
         Log.d(TAG, "uid: " + mCurrentUser.getUid());
+
+        /*
+        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
+
+        mCurrentUser.getIdToken(true)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        String token = task.getResult().getToken();
+                        Disposable disposable = retrofit.getUser(token)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(result -> {
+                                    String message = result.getMessage();
+                                    Log.d(TAG, "message: " + message);
+                                }, error -> {
+                                    error.printStackTrace();
+                                });
+                    }
+                });
+        */
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
