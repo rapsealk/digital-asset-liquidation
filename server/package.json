@@ -6,7 +6,13 @@
   "author": "rapsealk",
   "license": "Apache-2.0",
   "private": false,
+  "scripts": {
+    "dev": "node index.js",
+    "deploy": "pm2 start index.js --name hanium -i max"
+  },
   "dependencies": {
+    "axios": "^0.18.0",
+    "moment": "^2.22.1",
     "promise-mysql": "^3.2.1",
     "restify": "^7.2.0"
   }

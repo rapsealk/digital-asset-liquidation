@@ -4,6 +4,11 @@ const server = restify.createServer();
 const portNumber = 3000;
 
 const controller = require('./controllers');
+const Ticker = require('./utils/ticker');
+
+const ticker = new Ticker();
+// ticker.begin();
+ticker.reset();
 
 server.use((req, res, next) => {
     console.log(`GET/POST ${req.href()}`);
