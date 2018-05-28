@@ -1,6 +1,7 @@
 const db = require('../utils/database');
 
 const authController = require('./auth');
+const userController = require('./user');
 
 exports.get = async (req, res, next) => {
 
@@ -21,3 +22,4 @@ exports.get = async (req, res, next) => {
 };
 
 exports.auth = authController;
+exports.user = userController;

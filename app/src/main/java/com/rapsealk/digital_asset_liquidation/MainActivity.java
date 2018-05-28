@@ -62,7 +62,6 @@ public class MainActivity extends RealmAppCompatActivity {
         }
         Log.d(TAG, "uid: " + mCurrentUser.getUid());
 
-        /*
         RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
 
         mCurrentUser.getIdToken(true)
@@ -80,7 +79,6 @@ public class MainActivity extends RealmAppCompatActivity {
                                 });
                     }
                 });
-        */
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 

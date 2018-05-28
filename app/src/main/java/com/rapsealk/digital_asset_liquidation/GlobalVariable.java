@@ -20,4 +20,6 @@ public class GlobalVariable {
 
     public static final String DATABASE_ASSET       = "asset";
     public static final String DATABASE_USERS       = "users";
+
+    public static final String API_SERVER_URL       = "http://192.168.35.148:3000/";
 }

@@ -1,5 +1,6 @@
 package com.rapsealk.digital_asset_liquidation.network;
 
+import com.rapsealk.digital_asset_liquidation.GlobalVariable;
 import com.rapsealk.digital_asset_liquidation.network.response.DefaultResponse;
 
 import io.reactivex.Observable;
@@ -15,7 +16,7 @@ import retrofit2.http.Header;
 public interface RetrofitManager {
 
     public static final Retrofit instance = new Retrofit.Builder()
-            .baseUrl("HTTP_BASE_URL")
+            .baseUrl(GlobalVariable.API_SERVER_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build();
