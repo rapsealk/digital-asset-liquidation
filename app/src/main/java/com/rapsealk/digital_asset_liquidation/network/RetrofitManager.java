@@ -1,14 +1,17 @@
 package com.rapsealk.digital_asset_liquidation.network;
 
 import com.rapsealk.digital_asset_liquidation.GlobalVariable;
-import com.rapsealk.digital_asset_liquidation.network.response.DefaultResponse;
+import com.rapsealk.digital_asset_liquidation.network.response.TokenResponse;
+import com.rapsealk.digital_asset_liquidation.network.response.UserResponse;
 
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.POST;
 
 /**
  * Created by rapsealk on 2018. 5. 26..
@@ -22,14 +25,13 @@ public interface RetrofitManager {
             .build();
 
     @GET("user")
-    Observable<DefaultResponse> getUser(
+    Observable<UserResponse> getUser(
         @Header("Authorization") String authorization
     );
 
-    /*
-    @GET("user")
-    Call<DefaultResponse> getUser(
-        @Header("Authorization") String authorization
+    @POST("auth/signin")
+    Observable<TokenResponse> signIn(
+        @Body String id,
+        @Body String password
     );
-    */
 }

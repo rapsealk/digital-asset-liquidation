@@ -3,27 +3,18 @@ package com.rapsealk.digital_asset_liquidation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
-
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.rapsealk.digital_asset_liquidation.schema.User;
-
-import io.realm.Realm;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class LoginActivity extends RealmAppCompatActivity {
 
     private final String TAG = LoginActivity.class.getSimpleName();
 
-    private GoogleApiClient mGoogleApiClient;
-    private FirebaseAuth mFirebaseAuth;
+    // private GoogleApiClient mGoogleApiClient;
+    // private FirebaseAuth mFirebaseAuth;
 
     private ProgressBar mProgressBar;
 
@@ -32,8 +23,24 @@ public class LoginActivity extends RealmAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        EditText etId = (EditText) findViewById(R.id.et_id);
+        EditText etPassword = (EditText) findViewById(R.id.et_password);
+        Button btnLogin = (Button) findViewById(R.id.btn_login);
+        TextView tvRegister = (TextView) findViewById(R.id.tv_register);
+
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+        btnLogin.setOnClickListener(view -> {
+            String id = etId.getText().toString();
+            String password = etPassword.getText().toString();
+
+        });
+
+        tvRegister.setOnClickListener(view -> {
+            Toast.makeText(this, "Register", Toast.LENGTH_SHORT).show();
+        });
+
+        /*
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -52,8 +59,10 @@ public class LoginActivity extends RealmAppCompatActivity {
             Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(intent, GlobalVariable.REQUEST_CODE_SIGN_IN);
         });
+        */
     }
 
+    /*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -82,6 +91,7 @@ public class LoginActivity extends RealmAppCompatActivity {
                     }
                 });
     }
+    */
 
     private void setProgressBarVisibility(int visibility) {
         switch (visibility) {
@@ -96,6 +106,7 @@ public class LoginActivity extends RealmAppCompatActivity {
         mProgressBar.setVisibility(visibility);
     }
 
+    /*
     private void updateLocalDatabase(String uid) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -108,4 +119,5 @@ public class LoginActivity extends RealmAppCompatActivity {
         }
         realm.commitTransaction();
     }
+    */
 }

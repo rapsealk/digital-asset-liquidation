@@ -1,12 +1,18 @@
 const restify = require('restify');
 
 const server = restify.createServer();
-const portNumber = 3000;
+
+const bodyParser = require('body-parser');
+
+server.use(bodyParser.urlencoded({ extended: false }));
+server.use(bodyParser.json());
 
 const controller = require('./controllers');
-const Ticker = require('./utils/ticker');
+const authController = require('./controllers/auth');
+const userController = require('./controllers/user');
+// const Ticker = require('./utils/ticker');
 
-const ticker = new Ticker();
+// const ticker = new Ticker();
 // ticker.begin();
 // ticker.reset();
 
@@ -16,9 +22,14 @@ server.use((req, res, next) => {
 });
 
 server.get('/', controller.get);
-server.get('/auth', controller.auth.get);
-server.post('/auth', controller.auth.post);
-server.get('/user', controller.user.get);
+// server.get('/auth', authController.get);
+// server.post('/auth', authController.post);
+server.post('/auth/signup', authController.signUp);
+server.post('/auth/signin', authController.signIn, authController.issue);
+// server.get('/auth/new', authController.new);
+server.get('/user', authController.authenticate, userController.get);
+
+const portNumber = 3000;
 
 server.listen(portNumber, () => {
     console.log('%s listening at %s (port: %d)', server.name, server.url, portNumber);

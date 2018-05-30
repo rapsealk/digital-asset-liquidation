@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -21,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
 import com.rapsealk.digital_asset_liquidation.schema.User;
+import com.rapsealk.digital_asset_liquidation.util.RSAManager;
+import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageClickListener;
@@ -37,11 +37,9 @@ public class MainActivity extends RealmAppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mCurrentUser;
     private FirebaseDatabase mFirebaseDatabase;
 
-    private Realm realm;
+    // private Realm realm;
 
     private ProgressBar progressBar;
     // private Button mBtnKeyGen;
@@ -51,38 +49,28 @@ public class MainActivity extends RealmAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
-        if (mCurrentUser == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-            return;
+        /*
+        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+        String authToken = sharedPreferenceManager.getAuthToken();
+        if (authToken != null) {
+            Disposable disposable = retrofit.getUser(authToken)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(result -> {
+                        String message = result.getMessage();
+                        ((ImageView) findViewById(R.id.iv_alert)).setVisibility(ImageView.GONE);
+                    }, Throwable::printStackTrace);
+        } else {
+            ((Button) findViewById(R.id.btn_login)).setOnClickListener(view -> {
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivityForResult(intent, GlobalVariable.REQUEST_CODE_SIGN_IN);
+            });
         }
-        Log.d(TAG, "uid: " + mCurrentUser.getUid());
-
-        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
-
-        mCurrentUser.getIdToken(true)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        String token = task.getResult().getToken();
-                        Disposable disposable = retrofit.getUser(token)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribeOn(Schedulers.io())
-                                .subscribe(result -> {
-                                    String message = result.getMessage();
-                                    Log.d(TAG, "message: " + message);
-                                }, error -> {
-                                    error.printStackTrace();
-                                });
-                    }
-                });
+        */
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
-        realm = Realm.getDefaultInstance();
+        // realm = Realm.getDefaultInstance();
 
         // Check whether permissions are granted
         // FIXME("Rx.all") ================================================================================
@@ -142,9 +130,11 @@ public class MainActivity extends RealmAppCompatActivity {
                     }
                 });
 
+        /*
         User user = realm.where(User.class)
                 .equalTo("uid", mCurrentUser.getUid())
                 .findFirst();
+        */
         /*
         if (user != null) {
             mBtnKeyGen.setText(user.getPublicKey());
@@ -202,6 +192,19 @@ public class MainActivity extends RealmAppCompatActivity {
             startActivity(intent);
         });
         */
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case GlobalVariable.REQUEST_CODE_SIGN_IN: {
+                Log.d(TAG, "REQUEST_CODE_SIGN_IN: " + (resultCode == RESULT_OK));
+                if (resultCode == RESULT_OK) {
+
+                }
+            }
+        }
     }
 
     // TODO("customize progress bar")

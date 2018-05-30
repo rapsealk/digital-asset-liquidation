@@ -22,4 +22,12 @@ public class GlobalVariable {
     public static final String DATABASE_USERS       = "users";
 
     public static final String API_SERVER_URL       = "http://192.168.35.148:3000/";
+
+    public static final String RSA_PUBLIC_KEY       = // "-----BEGIN RSA PUBLIC KEY-----\\n"
+                "MIIBCgKCAQEAl7GaxlF3WQhXlC3pRHsUrqjODoiBSA0YxfZPlgDcdJd6in/GhM5XoAyTjbOp" +
+                "blwl6VH9MWsz3smhFqCVFn/UA6m4RWmNb2gXj4nUnUS7Z1DG+tdu+MGmHql30QSe5/ikCrF/" +
+                "HN4lajDIbqeCK/j3rcXqaOVvGjJyHYVhqThFmvzkehCchRQONAOcnSNox8hUSPfsgf//+3Hh" +
+                "ZX7xUmWXbGkELXhS0n0pXIsA2ZUGdwZBnCfitf0eckhNvtN5OimVT/UOJms70+AmLlYs0JXK" +
+                "FnVvrfskYOu/Tou0TykS/yl1DBr6f5wB+onJPgFRTfxQHU4teVsjXsRgGZit806LFwIDAQAB";
+                // -----END RSA PUBLIC KEY-----\\n";
 }

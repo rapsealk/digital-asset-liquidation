@@ -5,14 +5,14 @@ package com.rapsealk.digital_asset_liquidation.network.response;
  */
 public class DefaultResponse {
 
-    private String message;
+    private boolean succeed;
 
-    public String getMessage() {
-        return this.message;
+    public boolean isSucceed() {
+        return this.succeed;
     }
 
     @Override
     public String toString() {
-        return String.format("{ message: %s }", message);
+        return String.format("{ succeed: %s }", succeed);
     }
 }
