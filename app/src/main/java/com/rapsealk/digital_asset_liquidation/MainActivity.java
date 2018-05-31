@@ -18,8 +18,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
-import com.rapsealk.digital_asset_liquidation.schema.User;
-import com.rapsealk.digital_asset_liquidation.util.RSAManager;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
 
 public class MainActivity extends RealmAppCompatActivity {
 
@@ -42,31 +39,13 @@ public class MainActivity extends RealmAppCompatActivity {
     // private Realm realm;
 
     private ProgressBar progressBar;
-    // private Button mBtnKeyGen;
+    private ImageView ivAlert;
+    private Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        /*
-        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
-        String authToken = sharedPreferenceManager.getAuthToken();
-        if (authToken != null) {
-            Disposable disposable = retrofit.getUser(authToken)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(result -> {
-                        String message = result.getMessage();
-                        ((ImageView) findViewById(R.id.iv_alert)).setVisibility(ImageView.GONE);
-                    }, Throwable::printStackTrace);
-        } else {
-            ((Button) findViewById(R.id.btn_login)).setOnClickListener(view -> {
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivityForResult(intent, GlobalVariable.REQUEST_CODE_SIGN_IN);
-            });
-        }
-        */
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -90,10 +69,7 @@ public class MainActivity extends RealmAppCompatActivity {
 
         FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
         FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
-        // mBtnKeyGen = (Button) findViewById(R.id.btn_keygen);
-        // Button btnRegister = (Button) findViewById(R.id.btn_register);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
-        // Button btnSearch = (Button) findViewById(R.id.btn_search);
 
         CarouselView cvMyAssets = (CarouselView) findViewById(R.id.carousel_my_assets);
         CarouselView cvNewAssets = (CarouselView) findViewById(R.id.carousel_new_assets);
@@ -107,6 +83,30 @@ public class MainActivity extends RealmAppCompatActivity {
         cvNewAssets.setImageListener(((position, imageView) -> {
             imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
         }));
+
+        ivAlert = (ImageView) findViewById(R.id.iv_alert);
+        btnLogin = (Button) findViewById(R.id.btn_login);
+        btnLogin.setOnClickListener(view -> {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, GlobalVariable.REQUEST_CODE_SIGN_IN);
+        });
+
+        // retrofit
+        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
+
+        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+        String authToken = sharedPreferenceManager.getAuthToken();
+        if (authToken != null) {
+            Disposable disposable = retrofit.getUser(authToken)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(result -> {
+                        String id = result.getId();
+                        Log.d(TAG, "ID: " + id);
+                        ivAlert.setVisibility(ImageView.GONE);
+                        btnLogin.setVisibility(Button.GONE);
+                    }, Throwable::printStackTrace);
+        }
 
         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
                 .orderByChild("orderKey")
@@ -130,52 +130,10 @@ public class MainActivity extends RealmAppCompatActivity {
                     }
                 });
 
-        /*
-        User user = realm.where(User.class)
-                .equalTo("uid", mCurrentUser.getUid())
-                .findFirst();
-        */
-        /*
-        if (user != null) {
-            mBtnKeyGen.setText(user.getPublicKey());
-        } else {
-            mFirebaseDatabase.getReference(GlobalVariable.DATABASE_USERS).child(mCurrentUser.getUid())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            realm.beginTransaction();
-                            User _user = realm.createObject(User.class);
-                            _user.copy(user);
-                            realm.commitTransaction();
-                            // mBtnKeyGen.setText(user.getPublicKey());
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            // TODO("not implemented")
-                        }
-                    });
-        }
-        */
-
-        /* TODO("too much work on main thread")
-        mBtnKeyGen.setOnClickListener(view -> {
-            new KeyGenTask().execute();
-        });
-        */
-
         fabRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
-        /*
-        btnRegister.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-            // TODO("update recent assets")
-            startActivity(intent);
-        });
-        */
 
         btnHistory.setOnClickListener(view -> {
             Intent intent = new Intent(this, MyAssetActivity.class);
@@ -186,12 +144,6 @@ public class MainActivity extends RealmAppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         });
-        /*
-        btnSearch.setOnClickListener(view -> {
-            Intent intent = new Intent(this, SearchActivity.class);
-            startActivity(intent);
-        });
-        */
     }
 
     @Override
@@ -201,7 +153,8 @@ public class MainActivity extends RealmAppCompatActivity {
             case GlobalVariable.REQUEST_CODE_SIGN_IN: {
                 Log.d(TAG, "REQUEST_CODE_SIGN_IN: " + (resultCode == RESULT_OK));
                 if (resultCode == RESULT_OK) {
-
+                    ivAlert.setVisibility(ImageView.GONE);
+                    btnLogin.setVisibility(Button.GONE);
                 }
             }
         }
@@ -220,81 +173,6 @@ public class MainActivity extends RealmAppCompatActivity {
         }
         progressBar.setVisibility(visibility);
     }
-
-    /* TODO("memory leak")
-    private class KeyGenTask extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... args) {
-            runOnUiThread(() -> setProgressBarVisibility(ProgressBar.VISIBLE));
-            String hashMessage = "HASH MESSAGE";
-            try {
-                KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
-                ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp521r1");
-                keyPairGenerator.initialize(ecGenParameterSpec);
-                KeyPair keyPair = keyPairGenerator.generateKeyPair();
-                PublicKey publicKey = keyPair.getPublic();
-                Log.d(TAG, "Public Key: " + publicKey.toString() + ", length: " + publicKey.toString().length());
-                PrivateKey privateKey = keyPair.getPrivate();
-                Log.d(TAG, "Private Key: " + privateKey.toString() + ", length: " + privateKey.toString().length());
-                MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-                // run 1 sec process
-                String input = publicKey.toString();
-                for (int i = 0; i < 10000; i++) {
-                    messageDigest.reset();
-                    messageDigest.update(input.getBytes());
-                    byte[] digested = messageDigest.digest();
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (byte message: digested) { stringBuilder.append(Integer.toString((message & 0xFF) + 0x100, 16).substring(1)); }
-                    hashMessage = stringBuilder.toString();
-                }
-            } catch (Exception e) { // NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException
-                e.printStackTrace();
-            } finally {
-                runOnUiThread(() -> setProgressBarVisibility(ProgressBar.GONE));
-            }
-            return hashMessage;
-        }
-
-        @Override
-        protected void onPostExecute(String hashMessage) {
-            Log.d(TAG, "SHA-256 Hash: " + hashMessage);
-            updatePublicKey(hashMessage.substring(hashMessage.length()-20));
-        }
-    }
-    */
-
-    /*
-    private void updatePublicKey(String publicKey) {
-        runOnUiThread(() -> setProgressBarVisibility(ProgressBar.VISIBLE));
-        HashMap<String, Object> update = new HashMap<>();
-        update.put("public_key", publicKey);
-        mFirebaseDatabase.getReference("users").child(mCurrentUser.getUid())
-                .updateChildren(update)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        // Realm
-                        realm.beginTransaction();
-                        String uid = mCurrentUser.getUid();
-                        User user = realm.where(User.class)
-                                .equalTo("uid", uid)
-                                .findFirst();
-                        if (user == null) {
-                            user = realm.createObject(User.class)
-                                    .setUid(uid);
-                        }
-                        user.setPublicKey(publicKey);
-                        realm.commitTransaction();
-                        mBtnKeyGen.setText(publicKey);
-                    }
-                    runOnUiThread(() -> setProgressBarVisibility(ProgressBar.GONE));
-                })
-                .addOnFailureListener(this, e -> {
-                    e.printStackTrace();
-                    runOnUiThread(() -> setProgressBarVisibility(ProgressBar.GONE));
-                });
-    }
-    */
 
     private void initCarouselView(CarouselView view, ArrayList<Asset> assets) {
         ImageListener imageListener = new ImageListener() {

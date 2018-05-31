@@ -1,7 +1,7 @@
 package com.rapsealk.digital_asset_liquidation;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,12 +9,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
+import com.rapsealk.digital_asset_liquidation.network.body.IdAndPasswordBody;
+import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class LoginActivity extends RealmAppCompatActivity {
 
     private final String TAG = LoginActivity.class.getSimpleName();
-
-    // private GoogleApiClient mGoogleApiClient;
-    // private FirebaseAuth mFirebaseAuth;
 
     private ProgressBar mProgressBar;
 
@@ -30,68 +35,41 @@ public class LoginActivity extends RealmAppCompatActivity {
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
+
+        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+
         btnLogin.setOnClickListener(view -> {
             String id = etId.getText().toString();
             String password = etPassword.getText().toString();
 
+            if (id.isEmpty()) {
+                Toast.makeText(this, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (password.isEmpty()) {
+                Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Disposable disposable = retrofit.signIn(new IdAndPasswordBody(id, password))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(result -> {
+                        if (result.isSucceed()) {
+                            String token = result.getToken();
+                            Log.d(TAG, "Token: " + token);
+                            sharedPreferenceManager.setAuthToken(token);
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    }, Throwable::printStackTrace);
         });
 
         tvRegister.setOnClickListener(view -> {
             Toast.makeText(this, "Register", Toast.LENGTH_SHORT).show();
         });
-
-        /*
-        mFirebaseAuth = FirebaseAuth.getInstance();
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setOnClickListener(view -> {
-            setProgressBarVisibility(ProgressBar.VISIBLE);
-            Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-            startActivityForResult(intent, GlobalVariable.REQUEST_CODE_SIGN_IN);
-        });
-        */
     }
-
-    /*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GlobalVariable.REQUEST_CODE_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            } else {
-                setProgressBarVisibility(ProgressBar.GONE);
-            }
-        }
-    }
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, task -> {
-                    setProgressBarVisibility(ProgressBar.GONE);
-                    if (task.isSuccessful()) {
-                        String uid = mFirebaseAuth.getCurrentUser().getUid();
-                        updateLocalDatabase(uid);
-                        Intent intent = new Intent(this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-    }
-    */
 
     private void setProgressBarVisibility(int visibility) {
         switch (visibility) {

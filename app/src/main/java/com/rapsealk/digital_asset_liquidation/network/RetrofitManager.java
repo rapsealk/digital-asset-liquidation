@@ -1,6 +1,7 @@
 package com.rapsealk.digital_asset_liquidation.network;
 
 import com.rapsealk.digital_asset_liquidation.GlobalVariable;
+import com.rapsealk.digital_asset_liquidation.network.body.IdAndPasswordBody;
 import com.rapsealk.digital_asset_liquidation.network.response.TokenResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.UserResponse;
 
@@ -31,7 +32,6 @@ public interface RetrofitManager {
 
     @POST("auth/signin")
     Observable<TokenResponse> signIn(
-        @Body String id,
-        @Body String password
+        @Body IdAndPasswordBody body
     );
 }
