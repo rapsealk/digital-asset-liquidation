@@ -5,10 +5,13 @@ import android.content.pm.PackageManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -34,9 +37,11 @@ public class MainActivity extends RealmAppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
-    private FirebaseDatabase mFirebaseDatabase;
-
     // private Realm realm;
+
+    private String[] mTabTitles;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
 
     private ProgressBar progressBar;
     private ImageView ivAlert;
@@ -47,7 +52,17 @@ public class MainActivity extends RealmAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mTabTitles = new String[] { "Tab#1", "Tab#2", "Tab#3" };
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        // set the adapter for the list view
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mTabTitles));
+        mDrawerList.setOnItemClickListener((parent, view, position, id) -> {
+
+        });
+
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         // realm = Realm.getDefaultInstance();
 
