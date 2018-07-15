@@ -19,7 +19,8 @@
     "moment": "^2.22.1",
     "openzeppelin-solidity": "1.11.0",
     "promise-mysql": "^3.2.1",
-    "restify": "^7.2.0"
+    "restify": "^7.2.0",
+    "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {}
 }

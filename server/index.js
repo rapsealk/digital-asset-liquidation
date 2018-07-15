@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 
+const contracts = require('./dapp/contracts');
+
 const controller = require('./controllers');
 const authController = require('./controllers/auth');
 const userController = require('./controllers/user');
@@ -17,11 +19,12 @@ const userController = require('./controllers/user');
 // ticker.reset();
 
 server.use((req, res, next) => {
-    console.log(`GET/POST ${req.href()}`);
+    console.log(`GET/POST [${req.method}] ${req.href()}`);
     return next();
 });
 
 server.get('/', controller.get);
+server.post('/accounts/create', contracts.createAccount);
 // server.get('/auth', authController.get);
 // server.post('/auth', authController.post);
 server.post('/auth/signup', authController.signUp);
