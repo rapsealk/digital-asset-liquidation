@@ -1,5 +1,6 @@
 package com.rapsealk.digital_asset_liquidation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -40,6 +41,8 @@ public class LoginActivity extends RealmAppCompatActivity {
         SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
         btnLogin.setOnClickListener(view -> {
+
+            /*
             String id = etId.getText().toString();
             String password = etPassword.getText().toString();
 
@@ -51,7 +54,9 @@ public class LoginActivity extends RealmAppCompatActivity {
                 Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
+            */
 
+            /*
             Disposable disposable = retrofit.signIn(new IdAndPasswordBody(id, password))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
@@ -64,10 +69,12 @@ public class LoginActivity extends RealmAppCompatActivity {
                             finish();
                         }
                     }, Throwable::printStackTrace);
+            */
         });
 
         tvRegister.setOnClickListener(view -> {
-            Toast.makeText(this, "Register", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, SignUpActivity.class);
+            startActivity(intent);
         });
     }
 

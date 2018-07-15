@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
 import com.rapsealk.digital_asset_liquidation.schema.AssetCategory;
 
@@ -148,30 +149,30 @@ public class RegisterActivity extends AppCompatActivity {
             Bitmap bitmap = ((BitmapDrawable) assetImage.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            mFirebaseStorage.getReference(GlobalVariable.DATABASE_ASSET).child(mCurrentUser.getUid() + "/" + timestamp)
-                    .putBytes(baos.toByteArray())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            String url = task.getResult().getDownloadUrl().toString();
-                            Asset asset = new Asset(mCurrentUser.getUid(), timestamp, url)
-                                    .setCategory(new AssetCategory(majorCategory, minorCategory))
-                                    .setName(assetName.getText().toString())
-                                    .setBuildDate(buildDate.getText().toString())
-                                    .setPrice(Integer.parseInt(assetPrice.getText().toString()))
-                                    .setOnChain(switchChain.isChecked());
-                            mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET).child(String.valueOf(timestamp))
-                                    .setValue(asset)
-                                    .addOnCompleteListener(this, _task -> {
-                                        setProgressBarVisibility(ProgressBar.GONE);
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                                            finish();
-                                        }
-                                    });
-                        } else {
-                            setProgressBarVisibility(ProgressBar.GONE);
-                        }
-                    });
+            final StorageReference ref = mFirebaseStorage.getReference(GlobalVariable.DATABASE_ASSET).child(mCurrentUser.getUid() + "/" + timestamp);
+            ref.putBytes(baos.toByteArray())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String url = ref.getDownloadUrl().toString();   // task.getResult().getDownloadUrl().toString();
+                        Asset asset = new Asset(mCurrentUser.getUid(), timestamp, url)
+                                .setCategory(new AssetCategory(majorCategory, minorCategory))
+                                .setName(assetName.getText().toString())
+                                .setBuildDate(buildDate.getText().toString())
+                                .setPrice(Integer.parseInt(assetPrice.getText().toString()))
+                                .setOnChain(switchChain.isChecked());
+                        mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET).child(String.valueOf(timestamp))
+                                .setValue(asset)
+                                .addOnCompleteListener(this, _task -> {
+                                    setProgressBarVisibility(ProgressBar.GONE);
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                });
+                    } else {
+                        setProgressBarVisibility(ProgressBar.GONE);
+                    }
+                });
         });
     }
 

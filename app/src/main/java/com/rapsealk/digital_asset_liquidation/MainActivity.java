@@ -2,6 +2,8 @@ package com.rapsealk.digital_asset_liquidation;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -20,12 +22,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
+import com.rapsealk.digital_asset_liquidation.schema.Account;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
+
+import org.web3j.protocol.admin.Admin;
+import org.web3j.protocol.admin.AdminFactory;
+import org.web3j.protocol.http.HttpService;
 
 import java.util.ArrayList;
 
@@ -39,20 +46,41 @@ public class MainActivity extends RealmAppCompatActivity {
 
     // private Realm realm;
 
-    private String[] mTabTitles;
+    final private String[] mTabTitles = { "Tab#1", "Tab#2", "Tab#3" };
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
     private ProgressBar progressBar;
+    private ConstraintLayout mBlockScreen;
     private ImageView ivAlert;
     private Button btnLogin;
+
+    private Account mAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTabTitles = new String[] { "Tab#1", "Tab#2", "Tab#3" };
+        // Web3j web3 = Web3jFactory.build(new HttpService()); // default: http://localhost:8545/
+        Admin web3 = AdminFactory.build(new HttpService(GlobalVariable.ETH_SERVER_URL));
+
+        /*
+        web3.web3ClientVersion().observable().subscribe(x -> {
+            String clientVersion = x.getWeb3ClientVersion();
+        });
+        */
+
+        //web3.ethAccounts().
+/*
+        Web3ClientVersion web3ClientVersion;
+        try {
+            web3ClientVersion = web3.web3ClientVersion().send();
+            String clientVersion = web3ClientVersion.getWeb3ClientVersion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+*/
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -74,7 +102,7 @@ public class MainActivity extends RealmAppCompatActivity {
                 grantedPermissions += 1;
         }
         if (grantedPermissions == 0) {
-            Intent intent = new Intent(MainActivity.this, PermissionActivity.class);
+            Intent intent = new Intent(this, PermissionActivity.class);
             startActivity(intent);
             finish();
             return;
@@ -99,6 +127,7 @@ public class MainActivity extends RealmAppCompatActivity {
             imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
         }));
 
+        mBlockScreen = (ConstraintLayout) findViewById(R.id.block_screen);
         ivAlert = (ImageView) findViewById(R.id.iv_alert);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(view -> {
@@ -110,6 +139,42 @@ public class MainActivity extends RealmAppCompatActivity {
         RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
 
         SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+
+        /*
+        try {
+            NewAccountIdentifier id = web3.personalNewAccount("PASSWORD").send();
+            id.getAccountId();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
+                /*
+                .observable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(result -> {
+                    String accountId = result.getAccountId();
+                });
+                */
+
+        mAccount = sharedPreferenceManager.getAccount();
+        if (mAccount == null) {
+            setProgressBarVisibility(ProgressBar.VISIBLE);
+            Disposable disposable = retrofit.createAccount()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(result -> {
+                        sharedPreferenceManager.setAccount(result);
+                        mAccount = result;
+                        updateAccountAddress(mAccount);
+                        setProgressBarVisibility(ProgressBar.GONE);
+                    }, Throwable::printStackTrace);
+        } else {
+            updateAccountAddress(mAccount);
+        }
+
+        /*
         String authToken = sharedPreferenceManager.getAuthToken();
         if (authToken != null) {
             Disposable disposable = retrofit.getUser(authToken)
@@ -122,13 +187,14 @@ public class MainActivity extends RealmAppCompatActivity {
                         btnLogin.setVisibility(Button.GONE);
                     }, Throwable::printStackTrace);
         }
+        */
 
         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
                 .orderByChild("orderKey")
                 .limitToFirst(3)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         ArrayList<Asset> assets = new ArrayList<>();
                         for (DataSnapshot child: dataSnapshot.getChildren()) {
                             Asset asset = child.getValue(Asset.class);
@@ -140,7 +206,7 @@ public class MainActivity extends RealmAppCompatActivity {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         databaseError.toException().printStackTrace();
                     }
                 });
@@ -172,6 +238,13 @@ public class MainActivity extends RealmAppCompatActivity {
                     btnLogin.setVisibility(Button.GONE);
                 }
             }
+        }
+    }
+
+    private void updateAccountAddress(Account account) {
+        mTabTitles[0] = account.getAddress();
+        synchronized (mDrawerList.getAdapter()) {
+            mDrawerList.getAdapter().notify();
         }
     }
 

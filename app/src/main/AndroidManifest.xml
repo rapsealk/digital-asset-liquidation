@@ -23,8 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".LoginActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".PermissionActivity"
             android:theme="@style/SplashTheme" />
@@ -35,6 +36,7 @@
         <activity android:name=".MyAssetActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".AssetActivity" />
+        <activity android:name=".SignUpActivity"></activity>
     </application>
 
 </manifest>
