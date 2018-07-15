@@ -15,11 +15,11 @@
     "body-parser": "^1.18.3",
     "crypto2": "^2.0.0",
     "jsonwebtoken": "^8.2.2",
+    "keypair": "^1.0.1",
     "moment": "^2.22.1",
+    "openzeppelin-solidity": "1.11.0",
     "promise-mysql": "^3.2.1",
     "restify": "^7.2.0"
   },
-  "devDependencies": {
-    "keypair": "^1.0.1"
-  }
+  "devDependencies": {}
 }
