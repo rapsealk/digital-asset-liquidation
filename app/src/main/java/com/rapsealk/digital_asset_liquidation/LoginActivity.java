@@ -29,10 +29,10 @@ public class LoginActivity extends RealmAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText etId = (EditText) findViewById(R.id.et_id);
+        EditText etEmail = (EditText) findViewById(R.id.et_email);
         EditText etPassword = (EditText) findViewById(R.id.et_password);
         Button btnLogin = (Button) findViewById(R.id.btn_login);
-        TextView tvRegister = (TextView) findViewById(R.id.tv_register);
+        TextView tvSignup = (TextView) findViewById(R.id.tv_signup);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
@@ -72,7 +72,7 @@ public class LoginActivity extends RealmAppCompatActivity {
             */
         });
 
-        tvRegister.setOnClickListener(view -> {
+        tvSignup.setOnClickListener(view -> {
             Intent intent = new Intent(this, SignUpActivity.class);
             startActivity(intent);
         });

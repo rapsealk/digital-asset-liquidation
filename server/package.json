@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "dev": "node index.js",
+    "dev": "nodemon index.js",
     "deploy": "pm2 start index.js --name hanium -i max"
   },
   "dependencies": {

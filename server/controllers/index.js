@@ -2,6 +2,8 @@ const db = require('../utils/database');
 
 exports.get = async (req, res, next) => {
 
+    return res.json(200, { response: true });
+
     try {
         var conn = await db.getConnection();
         let query = 'SELECT * FROM User';

@@ -21,7 +21,7 @@ public class GlobalVariable {
     public static final String DATABASE_ASSET       = "asset";
     public static final String DATABASE_USERS       = "users";
 
-    public static final String API_SERVER_URL       = "http://192.168.0.26:3000/";
+    public static final String API_SERVER_URL       = "http://192.168.35.9:3000/";
     public static final String ETH_SERVER_URL       = "http://192.168.0.26:8545/";  // "http://14.63.193.8:625/";
 
     public static final String RSA_PUBLIC_KEY       = // "-----BEGIN RSA PUBLIC KEY-----\\n"

@@ -3,6 +3,12 @@
     <color name="colorPrimary">#FFD707</color>
     <color name="colorPrimaryDark">#F0A90F</color>
     <color name="colorAccent">#A9A9A9</color>
+    <color name="colorAccentDark">#A0BCDF</color>
+
+    <!--color name="colorPrimary">#E43F3F</color>
+    <color name="colorPrimaryDark">#E12929</color>
+    <color name="colorPrimaryDarker">#CC1D1D</color>
+    <color name="colorAccent">#FFFFFF</color-->
 
     <color name="green">#FF00FF00</color>
     <color name="red">#FFFF0000</color>
