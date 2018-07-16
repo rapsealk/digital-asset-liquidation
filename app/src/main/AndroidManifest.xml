@@ -24,6 +24,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SignUpActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
             android:name=".LoginActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
@@ -37,7 +41,6 @@
         <activity android:name=".MyAssetActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".AssetActivity" />
-        <activity android:name=".SignUpActivity" />
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@ package com.rapsealk.digital_asset_liquidation;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,17 +10,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
-import com.rapsealk.digital_asset_liquidation.network.body.IdAndPasswordBody;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-
-public class LoginActivity extends RealmAppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = LoginActivity.class.getSimpleName();
+
+    private FirebaseAuth mFirebaseAuth;
 
     private ProgressBar mProgressBar;
 
@@ -28,6 +26,8 @@ public class LoginActivity extends RealmAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
 
         EditText etEmail = (EditText) findViewById(R.id.et_email);
         EditText etPassword = (EditText) findViewById(R.id.et_password);
@@ -42,11 +42,10 @@ public class LoginActivity extends RealmAppCompatActivity {
 
         btnLogin.setOnClickListener(view -> {
 
-            /*
-            String id = etId.getText().toString();
+            String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
 
-            if (id.isEmpty()) {
+            if (email.isEmpty()) {
                 Toast.makeText(this, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -54,7 +53,16 @@ public class LoginActivity extends RealmAppCompatActivity {
                 Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            */
+
+            setProgressBarVisibility(ProgressBar.VISIBLE);
+
+            mFirebaseAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        setProgressBarVisibility(ProgressBar.GONE);
+                        if (task.isSuccessful()) {
+                            finish();
+                        }
+                    });
 
             /*
             Disposable disposable = retrofit.signIn(new IdAndPasswordBody(id, password))

@@ -1,27 +1,21 @@
 package com.rapsealk.digital_asset_liquidation.schema;
 
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-
 /**
  * Created by rapsealk on 2018. 5. 10..
  */
-public class User extends RealmObject {
+public class User {
 
     private String uid;
-    private String public_key;
+    // private String public_key;
+    private String name;
+    private String birthdate;
+    private String address;
 
-    @Ignore
-    private int sessionId;
-
-    public User() {
-        this.uid = "";
-        this.public_key = "";
-    }
-
-    public User(String uid, String publicKey) {
+    public User(String uid, String name, String birthdate) {
         this.uid = uid;
-        this.public_key = publicKey;
+        this.name = name;
+        this.birthdate = birthdate;
+        this.address = "";
     }
 
     public String getUid() {
@@ -33,6 +27,34 @@ public class User extends RealmObject {
         return this;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public User SetName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getBirthdate() {
+        return this.birthdate;
+    }
+
+    public User setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+        return this;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public User setAddress(String address) {
+        this.address = address;
+        return this;
+    }
+
+    /*
     public String getPublicKey() {
         return this.public_key;
     }
@@ -41,9 +63,12 @@ public class User extends RealmObject {
         this.public_key = publicKey;
         return this;
     }
+    */
 
+    /*
     public void copy(User user) {
         this.uid = user.uid;
         this.public_key = user.public_key;
     }
+    */
 }

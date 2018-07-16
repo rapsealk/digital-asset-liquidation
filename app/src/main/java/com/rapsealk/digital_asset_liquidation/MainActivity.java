@@ -8,8 +8,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +20,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,21 +35,22 @@ import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
-import org.web3j.protocol.admin.Admin;
-import org.web3j.protocol.admin.AdminFactory;
-import org.web3j.protocol.http.HttpService;
-
 import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends RealmAppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
     // private Realm realm;
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseDatabase mFirebaseDatabase;
+
+    private ConstraintLayout mRootConstraintLayout;
 
     final private String[] mTabTitles = { "Tab#1", "Tab#2", "Tab#3" };
     private DrawerLayout mDrawerLayout;
@@ -62,8 +68,11 @@ public class MainActivity extends RealmAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
         // Web3j web3 = Web3jFactory.build(new HttpService()); // default: http://localhost:8545/
-        Admin web3 = AdminFactory.build(new HttpService(GlobalVariable.ETH_SERVER_URL));
+        // Admin web3 = AdminFactory.build(new HttpService(GlobalVariable.ETH_SERVER_URL));
 
         /*
         web3.web3ClientVersion().observable().subscribe(x -> {
@@ -81,6 +90,9 @@ public class MainActivity extends RealmAppCompatActivity {
             e.printStackTrace();
         }
 */
+
+        mRootConstraintLayout = (ConstraintLayout) findViewById(R.id.root_constraint_layout);
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -158,21 +170,38 @@ public class MainActivity extends RealmAppCompatActivity {
                 });
                 */
 
-        mAccount = sharedPreferenceManager.getAccount();
-        if (mAccount == null) {
-            setProgressBarVisibility(ProgressBar.VISIBLE);
-            Disposable disposable = retrofit.createAccount()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(result -> {
-                        sharedPreferenceManager.setAccount(result);
-                        mAccount = result;
-                        updateAccountAddress(mAccount);
-                        setProgressBarVisibility(ProgressBar.GONE);
-                    }, Throwable::printStackTrace);
-        } else {
-            updateAccountAddress(mAccount);
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+
+            mAccount = sharedPreferenceManager.getAccount();
+            if (mAccount == null) {
+                setProgressBarVisibility(ProgressBar.VISIBLE);
+                Disposable disposable = retrofit.createAccount()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(result -> {
+                            sharedPreferenceManager.setAccount(result);
+                            mAccount = result;
+                            updateAccountAddress(mAccount);
+                            setProgressBarVisibility(ProgressBar.GONE);
+
+                            mFirebaseDatabase.getReference(GlobalVariable.DATABASE_USERS).child(user.getUid())
+                                    .setValue("address", mAccount.getAddress());
+
+                        }, Throwable::printStackTrace);
+            } else {
+                updateAccountAddress(mAccount);
+            }
         }
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    // TODO("Update Address");
+                }
+            }
+        });
 
         /*
         String authToken = sharedPreferenceManager.getAuthToken();
@@ -225,6 +254,15 @@ public class MainActivity extends RealmAppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (mFirebaseAuth.getCurrentUser() != null) {
+            mRootConstraintLayout.removeView(mBlockScreen);
+        }
     }
 
     @Override
