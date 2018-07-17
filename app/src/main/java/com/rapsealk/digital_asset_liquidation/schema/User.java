@@ -1,5 +1,7 @@
 package com.rapsealk.digital_asset_liquidation.schema;
 
+import java.util.Locale;
+
 /**
  * Created by rapsealk on 2018. 5. 10..
  */
@@ -10,12 +12,14 @@ public class User {
     private String name;
     private String birthdate;
     private String address;
+    private boolean admin;
 
-    public User(String uid, String name, String birthdate) {
+    public User(String uid, String name, String birthdate, String address, boolean admin) {
         this.uid = uid;
         this.name = name;
         this.birthdate = birthdate;
-        this.address = "";
+        this.address = address;
+        this.admin = admin;
     }
 
     public String getUid() {
@@ -54,21 +58,18 @@ public class User {
         return this;
     }
 
-    /*
-    public String getPublicKey() {
-        return this.public_key;
+    public boolean isAdmin() {
+        return this.admin;
     }
 
-    public User setPublicKey(String publicKey) {
-        this.public_key = publicKey;
+    public User isAdmin(boolean admin) {
+        this.admin = admin;
         return this;
     }
-    */
 
-    /*
-    public void copy(User user) {
-        this.uid = user.uid;
-        this.public_key = user.public_key;
+    @Override
+    public String toString() {
+        return String.format(Locale.KOREA, "{ uid: %s, name: %s, birthdate: %s, address: %s, admin: %s }",
+                getUid(), getName(), getBirthdate(), getAddress(), isAdmin());
     }
-    */
 }

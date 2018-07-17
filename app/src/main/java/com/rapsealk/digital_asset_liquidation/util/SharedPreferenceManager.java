@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.rapsealk.digital_asset_liquidation.schema.Account;
-
-import java.util.HashSet;
+import com.rapsealk.digital_asset_liquidation.schema.User;
 
 /**
  * Created by rapsealk on 2018. 5. 29..
@@ -16,12 +14,16 @@ public class SharedPreferenceManager {
     private static SharedPreferenceManager sInstance;
     private static SharedPreferences sSharedPreference;
 
+    private Gson gson;
+
+    private String USER = "USER";
     // private String AUTH_TOKEN = "AUTH_TOKEN";
-    private String ETH_ACCOUNT  = "ETH_ACCOUNT";
+    // private String ETH_ACCOUNT  = "ETH_ACCOUNT";
 
     private SharedPreferenceManager(Context context) {
         String filename = "DigitalAssetLiquidation";
         sSharedPreference = context.getSharedPreferences(filename, Context.MODE_PRIVATE);
+        gson = new Gson();
     }
 
     public static SharedPreferenceManager getInstance(Context context) {
@@ -29,19 +31,20 @@ public class SharedPreferenceManager {
         return sInstance;
     }
 
-    /*
-    public String getAuthToken() {
-        return sSharedPreference.getString(AUTH_TOKEN, null);
-    }
-
-    public SharedPreferenceManager setAuthToken(String token) {
+    public SharedPreferenceManager setUser(User user) {
         sSharedPreference.edit()
-                .putString(AUTH_TOKEN, token)
+                .putString(USER, gson.toJson(user))
                 .apply();
         return this;
     }
-    */
 
+    public User getUser() {
+        String json = sSharedPreference.getString(USER, null);
+        if (json == null) return null;
+        return gson.fromJson(json, User.class);
+    }
+
+    /*
     public SharedPreferenceManager setAccount(Account account) {
         Gson gson = new Gson();
         sSharedPreference.edit()
@@ -56,4 +59,5 @@ public class SharedPreferenceManager {
         Gson gson = new Gson();
         return gson.fromJson(json, Account.class);
     }
+    */
 }

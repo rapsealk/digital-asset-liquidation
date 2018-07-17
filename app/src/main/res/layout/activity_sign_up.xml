@@ -88,13 +88,39 @@
             android:textSize="16sp"
             android:text="2018-01-01"/>
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/checkbox_constraint_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_birthdate">
+
+            <TextView
+                android:id="@+id/tv_is_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Admin"/>
+
+            <CheckBox
+                android:id="@+id/cb_is_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_is_admin"/>
+
+        </android.support.constraint.ConstraintLayout>
+
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_signup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_birthdate"
+            app:layout_constraintTop_toBottomOf="@id/checkbox_constraint_layout"
             android:padding="12dp"
             android:backgroundTint="@color/colorPrimary"
             android:text="@string/btn_signup"/>

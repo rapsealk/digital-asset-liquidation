@@ -2,9 +2,9 @@ package com.rapsealk.digital_asset_liquidation.network;
 
 import com.rapsealk.digital_asset_liquidation.GlobalVariable;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
+import com.rapsealk.digital_asset_liquidation.network.response.AccountResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.BalanceResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.TokenResponse;
-import com.rapsealk.digital_asset_liquidation.schema.Account;
 
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
@@ -42,7 +42,7 @@ public interface RetrofitManager {
     Observable<TokenResponse> signUp();
 
     @POST("accounts/create")
-    Observable<Account> createAccount();
+    Observable<AccountResponse> createAccount();
 
     @GET("accounts/balance")
     Observable<BalanceResponse> balanceOf(

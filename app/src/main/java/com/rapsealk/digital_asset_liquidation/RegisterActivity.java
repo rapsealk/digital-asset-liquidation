@@ -131,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         registerButton.setOnClickListener(view -> {
-            setProgressBarVisibility(ProgressBar.VISIBLE);
+            setProgressBarVisible(true);
             // TODO("clean")
             String majorCategory = (String) majorSpinner.getSelectedItem();
             String minorCategory = (String) minorSpinner.getSelectedItem();
@@ -152,8 +152,14 @@ public class RegisterActivity extends AppCompatActivity {
             final StorageReference ref = mFirebaseStorage.getReference(GlobalVariable.DATABASE_ASSET).child(mCurrentUser.getUid() + "/" + timestamp);
             ref.putBytes(baos.toByteArray())
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        String url = ref.getDownloadUrl().toString();   // task.getResult().getDownloadUrl().toString();
+                    if (!task.isSuccessful()) {
+                        setProgressBarVisible(false);
+                        return;
+                    }
+                    // String url = ref.getDownloadUrl().toString();   // task.getResult().getDownloadUrl().toString();
+                    ref.getDownloadUrl().addOnCompleteListener(urlTask -> {
+                        String url = urlTask.getResult().toString();
+                        Log.d(TAG, "URL: " + url);
                         Asset asset = new Asset(mCurrentUser.getUid(), timestamp, url)
                                 .setCategory(new AssetCategory(majorCategory, minorCategory))
                                 .setName(assetName.getText().toString())
@@ -161,17 +167,15 @@ public class RegisterActivity extends AppCompatActivity {
                                 .setPrice(Integer.parseInt(assetPrice.getText().toString()))
                                 .setOnChain(switchChain.isChecked());
                         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET).child(String.valueOf(timestamp))
-                                .setValue(asset)
-                                .addOnCompleteListener(this, _task -> {
-                                    setProgressBarVisibility(ProgressBar.GONE);
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
-                                });
-                    } else {
-                        setProgressBarVisibility(ProgressBar.GONE);
-                    }
+                            .setValue(asset)
+                            .addOnCompleteListener(this, _task -> {
+                                setProgressBarVisible(false);
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
+                    });
                 });
         });
     }
@@ -269,16 +273,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // TODO("customize progress bar")
-    private void setProgressBarVisibility(int visibility) {
-        switch (visibility) {
-            case ProgressBar.VISIBLE: {
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                break;
-            }
-            case ProgressBar.GONE: {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            }
+    private void setProgressBarVisible(boolean isVisible) {
+        if (isVisible) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            mProgressBar.setVisibility(ProgressBar.VISIBLE);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            mProgressBar.setVisibility(ProgressBar.GONE);
         }
-        mProgressBar.setVisibility(visibility);
     }
 }

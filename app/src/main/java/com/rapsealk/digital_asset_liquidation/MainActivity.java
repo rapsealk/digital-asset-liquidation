@@ -7,7 +7,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,8 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
-import com.rapsealk.digital_asset_liquidation.schema.Account;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
+import com.rapsealk.digital_asset_liquidation.schema.User;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
@@ -41,78 +40,37 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
-    // private Realm realm;
-
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
 
-    private ConstraintLayout mRootConstraintLayout;
+    private FirebaseUser mFirebaseUser;
+    private User mUser;
+
+    RetrofitManager retrofit;
+    SharedPreferenceManager sharedPreferenceManager;
 
     final private String[] mTabTitles = { "Tab#1", "Tab#2", "Tab#3" };
-    private DrawerLayout mDrawerLayout;
+    // private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
     private ProgressBar progressBar;
+    private TextView tvEmail;
+    private TextView tvAddress;
+    private TextView tvBalance;
     private ConstraintLayout mBlockScreen;
     private ImageView ivAlert;
     private Button btnLogin;
-
-    private Account mAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-
-        // Web3j web3 = Web3jFactory.build(new HttpService()); // default: http://localhost:8545/
-        // Admin web3 = AdminFactory.build(new HttpService(GlobalVariable.ETH_SERVER_URL));
-
-        /*
-        web3.web3ClientVersion().observable().subscribe(x -> {
-            String clientVersion = x.getWeb3ClientVersion();
-        });
-        */
-
-        //web3.ethAccounts().
-/*
-        Web3ClientVersion web3ClientVersion;
-        try {
-            web3ClientVersion = web3.web3ClientVersion().send();
-            String clientVersion = web3ClientVersion.getWeb3ClientVersion();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
-
-        mRootConstraintLayout = (ConstraintLayout) findViewById(R.id.root_constraint_layout);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-        // set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mTabTitles));
-        mDrawerList.setOnItemClickListener((parent, view, position, id) -> {
-
-        });
-
-        TextView tvEmail = (TextView) findViewById(R.id.tv_user_email);
-        TextView tvAddress = (TextView) findViewById(R.id.tv_address);
-        TextView tvBalance = (TextView) findViewById(R.id.tv_balance);
-        ImageView ivToken = (ImageView) findViewById(R.id.iv_token);
-
-        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-
-        // realm = Realm.getDefaultInstance();
 
         // Check whether permissions are granted
         // FIXME("Rx.all") ================================================================================
@@ -128,6 +86,24 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         // ================================================================================================
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        // mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        // set the adapter for the list view
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mTabTitles));
+        mDrawerList.setOnItemClickListener((parent, view, position, id) -> {
+
+        });
+
+        tvEmail = (TextView) findViewById(R.id.tv_user_email);
+        tvAddress = (TextView) findViewById(R.id.tv_address);
+        tvBalance = (TextView) findViewById(R.id.tv_balance);
+        ImageView ivToken = (ImageView) findViewById(R.id.iv_token);
+
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
@@ -155,64 +131,19 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, GlobalVariable.REQUEST_CODE_SIGN_IN);
         });
 
-        // retrofit
-        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
-
-        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
-
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null) {
-
-            setProgressBarVisibility(ProgressBar.VISIBLE);
-
-            tvEmail.setText(user.getEmail());
-
-            mAccount = sharedPreferenceManager.getAccount();
-            if (mAccount == null) {
-                Disposable disposable = retrofit.createAccount()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(result -> {
-                            sharedPreferenceManager.setAccount(result);
-                            mAccount = result;
-                            // updateAccountAddress(mAccount);
-                            tvAddress.setText(mAccount.getAddress());
-
-                            mFirebaseDatabase.getReference(GlobalVariable.DATABASE_USERS).child(user.getUid())
-                                    .setValue("address", mAccount.getAddress());
-
-                            setProgressBarVisibility(ProgressBar.GONE);
-
-                        }, Throwable::printStackTrace);
-
-                retrofit.balanceOf(mAccount.getAddress())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(balanceResponse -> tvBalance.setText(String.format(Locale.KOREA, "%d", balanceResponse.getBalance())));
-
-            } else {
-                // updateAccountAddress(mAccount);
-                tvAddress.setText(mAccount.getAddress());
-
-                retrofit.balanceOf(mAccount.getAddress())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(balanceResponse -> {
-                            tvBalance.setText(String.format(Locale.KOREA, "%d", balanceResponse.getBalance()));
-
-                            setProgressBarVisibility(ProgressBar.GONE);
-                        });
-            }
-        }
+        // utilities
+        retrofit = RetrofitManager.instance.create(RetrofitManager.class);
+        sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
         ivToken.setOnClickListener(view -> {
-            setProgressBarVisibility(ProgressBar.VISIBLE);
-            retrofit.getAirdrop(new AddressBody(mAccount.getAddress()))
+            if (mUser == null) return;
+            setProgressBarVisible(true);
+            retrofit.getAirdrop(new AddressBody(mUser.getAddress()))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(response -> {
                         tvBalance.setText(String.format(Locale.KOREA, "%d", response.getBalance()));
-                        setProgressBarVisibility(ProgressBar.GONE);
+                        setProgressBarVisible(false);
                     }, Throwable::printStackTrace);
         });
 
@@ -225,42 +156,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        String authToken = sharedPreferenceManager.getAuthToken();
-        if (authToken != null) {
-            Disposable disposable = retrofit.getUser(authToken)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(result -> {
-                        String id = result.getId();
-                        Log.d(TAG, "ID: " + id);
-                        ivAlert.setVisibility(ImageView.GONE);
-                        btnLogin.setVisibility(Button.GONE);
-                    }, Throwable::printStackTrace);
-        }
-        */
-
         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
-                .orderByChild("orderKey")
-                .limitToFirst(3)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        ArrayList<Asset> assets = new ArrayList<>();
-                        for (DataSnapshot child: dataSnapshot.getChildren()) {
-                            Asset asset = child.getValue(Asset.class);
-                            if (asset == null) continue;
-                            assets.add(asset);
-                        }
-                        initCarouselView(cvMyAssets, assets);
-                        initCarouselView(cvNewAssets, assets);
+            .orderByChild("orderKey")
+            .limitToFirst(3)
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ArrayList<Asset> assets = new ArrayList<>();
+                    for (DataSnapshot child: dataSnapshot.getChildren()) {
+                        Asset asset = child.getValue(Asset.class);
+                        if (asset != null) assets.add(asset);
                     }
+                    initCarouselView(cvMyAssets, assets);
+                    initCarouselView(cvNewAssets, assets);
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        databaseError.toException().printStackTrace();
-                    }
-                });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    databaseError.toException().printStackTrace();
+                }
+            });
 
         fabRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
@@ -282,8 +197,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if (mFirebaseAuth.getCurrentUser() != null) {
-            mRootConstraintLayout.removeView(mBlockScreen);
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseUser != null) {
+            setProgressBarVisible(true);
+            mUser = sharedPreferenceManager.getUser();
+            Log.d(TAG, "user: " + mUser);
+            mBlockScreen.setVisibility(ConstraintLayout.GONE);
+            tvEmail.setText(mFirebaseUser.getEmail());
+            tvAddress.setText(mUser.getAddress());
+
+            retrofit.balanceOf(mUser.getAddress())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(balanceResponse -> {
+                        tvBalance.setText(String.format(Locale.KOREA, "%d", balanceResponse.getBalance()));
+                        setProgressBarVisible(false);
+                    });
+        } else {
+            mBlockScreen.setVisibility(ConstraintLayout.VISIBLE);
         }
     }
 
@@ -311,17 +242,14 @@ public class MainActivity extends AppCompatActivity {
     */
 
     // TODO("customize progress bar")
-    private void setProgressBarVisibility(int visibility) {
-        switch (visibility) {
-            case ProgressBar.VISIBLE: {
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                break;
-            }
-            case ProgressBar.GONE: {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            }
+    private void setProgressBarVisible(boolean isVisible) {
+        if (isVisible) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            progressBar.setVisibility(ProgressBar.VISIBLE);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            progressBar.setVisibility(ProgressBar.GONE);
         }
-        progressBar.setVisibility(visibility);
     }
 
     private void initCarouselView(CarouselView view, ArrayList<Asset> assets) {

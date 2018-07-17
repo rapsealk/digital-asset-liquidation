@@ -29,7 +29,7 @@ exports.createAccount = async (req, res) => {
 
     // const base = await TokenContract.methods.balanceOf(await web3.eth.getCoinbase()).call();
     // console.log('base:', base);
-    res.json({ succeed: true, account });
+    res.json({ succeed: true, address: account.address });
 };
 
 exports.airdrop = async (req, res) => {
