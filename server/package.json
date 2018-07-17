@@ -1,26 +1,25 @@
 {
-  "name": "digital-asset-liquidation-server",
-  "version": "1.0.0",
-  "description": "Node.js Restify API server for Digital Asset Liquidation Android application.",
-  "main": "index.js",
-  "author": "rapsealk",
-  "license": "Apache-2.0",
-  "private": false,
-  "scripts": {
-    "dev": "nodemon index.js",
-    "deploy": "pm2 start index.js --name hanium -i max"
-  },
-  "dependencies": {
-    "axios": "^0.18.0",
-    "body-parser": "^1.18.3",
-    "crypto2": "^2.0.0",
-    "jsonwebtoken": "^8.2.2",
-    "keypair": "^1.0.1",
-    "moment": "^2.22.1",
-    "openzeppelin-solidity": "1.11.0",
-    "promise-mysql": "^3.2.1",
-    "restify": "^7.2.0",
-    "web3": "^1.0.0-beta.34"
-  },
-  "devDependencies": {}
+	"name": "digital-asset-liquidation-server",
+	"version": "1.0.0",
+	"description": "Node.js Restify API server for Digital Asset Liquidation Android application.",
+	"main": "index.js",
+	"author": "rapsealk",
+	"license": "Apache-2.0",
+	"private": false,
+	"scripts": {
+		"dev": "nodemon index.js",
+		"deploy": "pm2 start index.js --name hanium -i max"
+	},
+	"dependencies": {
+		"axios": "^0.18.0",
+		"crypto2": "^2.0.0",
+		"jsonwebtoken": "^8.2.2",
+		"keypair": "^1.0.1",
+		"moment": "^2.22.1",
+		"openzeppelin-solidity": "1.11.0",
+		"promise-mysql": "^3.2.1",
+		"restify": "^7.2.1",
+		"web3": "^1.0.0-beta.34"
+	},
+	"devDependencies": {}
 }

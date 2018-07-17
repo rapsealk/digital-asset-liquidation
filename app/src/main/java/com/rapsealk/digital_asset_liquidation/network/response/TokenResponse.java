@@ -7,6 +7,11 @@ public class TokenResponse extends DefaultResponse {
 
     private String token;
 
+    public TokenResponse(boolean succeed, String token) {
+        super(succeed);
+        this.token = token;
+    }
+
     public String getToken() {
         return this.token;
     }

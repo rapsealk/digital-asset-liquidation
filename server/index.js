@@ -2,10 +2,8 @@ const restify = require('restify');
 
 const server = restify.createServer();
 
-const bodyParser = require('body-parser');
-
-server.use(bodyParser.urlencoded({ extended: false }));
-server.use(bodyParser.json());
+server.use(restify.plugins.queryParser());
+server.use(restify.plugins.bodyParser());
 
 const contracts = require('./dapp/contracts');
 
@@ -23,14 +21,21 @@ server.use((req, res, next) => {
     return next();
 });
 
-server.get('/', controller.get);
+server.get('/', contracts.getCoinbase);
+server.post('/', (req, res) => {
+    console.log('req.body:', req.body);
+    res.json(req.body);
+})
+// server.get('/', controller.get);
 server.post('/accounts/create', contracts.createAccount);
+server.get('/accounts/balance', contracts.balanceOf);
+server.post('/accounts/airdrop', contracts.airdrop);
 // server.get('/auth', authController.get);
 // server.post('/auth', authController.post);
-server.post('/auth/signup', authController.signUp);
-server.post('/auth/signin', authController.signIn, authController.issue);
+//server.post('/auth/signup', authController.signUp);
+//server.post('/auth/signin', authController.signIn, authController.issue);
 // server.get('/auth/new', authController.new);
-server.get('/user', authController.authenticate, userController.get);
+//server.get('/user', authController.authenticate, userController.get);
 
 const portNumber = 3000;
 

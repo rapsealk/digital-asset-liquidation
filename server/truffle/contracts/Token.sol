@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import "openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
+import "../../node_modules/openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
 
 contract Token is BasicToken {
 
@@ -10,10 +10,25 @@ contract Token is BasicToken {
 
     address public owner;
 
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
     constructor(address _owner, uint256 _totalSupply) public {
-        owner = _owner; // msg.sender;
+        owner = _owner;
         totalSupply_ = _totalSupply;
-        balances[_owner] = _totalSupply;
+        balances[owner] = _totalSupply;
+    }
+
+    function airdrop(address _to, uint256 _amount) public payable /*onlyOwner*/ returns (uint256) {
+        require(_to != address(0));
+        require(_amount <= balances[owner]);
+
+        balances[owner] = balances[owner].sub(_amount);
+        balances[_to] = balances[_to].add(_amount);
+        emit Transfer(owner, _to, _amount);
+        return balances[_to];
     }
 }
 

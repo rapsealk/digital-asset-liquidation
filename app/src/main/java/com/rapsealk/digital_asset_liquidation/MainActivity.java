@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
+import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
 import com.rapsealk.digital_asset_liquidation.schema.Account;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
@@ -36,6 +38,7 @@ import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -102,6 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        TextView tvEmail = (TextView) findViewById(R.id.tv_user_email);
+        TextView tvAddress = (TextView) findViewById(R.id.tv_address);
+        TextView tvBalance = (TextView) findViewById(R.id.tv_balance);
+        ImageView ivToken = (ImageView) findViewById(R.id.iv_token);
+
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         // realm = Realm.getDefaultInstance();
@@ -152,47 +160,61 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
-        /*
-        try {
-            NewAccountIdentifier id = web3.personalNewAccount("PASSWORD").send();
-            id.getAccountId();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-
-                /*
-                .observable()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(result -> {
-                    String accountId = result.getAccountId();
-                });
-                */
-
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
 
+            setProgressBarVisibility(ProgressBar.VISIBLE);
+
+            tvEmail.setText(user.getEmail());
+
             mAccount = sharedPreferenceManager.getAccount();
             if (mAccount == null) {
-                setProgressBarVisibility(ProgressBar.VISIBLE);
                 Disposable disposable = retrofit.createAccount()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe(result -> {
                             sharedPreferenceManager.setAccount(result);
                             mAccount = result;
-                            updateAccountAddress(mAccount);
-                            setProgressBarVisibility(ProgressBar.GONE);
+                            // updateAccountAddress(mAccount);
+                            tvAddress.setText(mAccount.getAddress());
 
                             mFirebaseDatabase.getReference(GlobalVariable.DATABASE_USERS).child(user.getUid())
                                     .setValue("address", mAccount.getAddress());
 
+                            setProgressBarVisibility(ProgressBar.GONE);
+
                         }, Throwable::printStackTrace);
+
+                retrofit.balanceOf(mAccount.getAddress())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(balanceResponse -> tvBalance.setText(String.format(Locale.KOREA, "%d", balanceResponse.getBalance())));
+
             } else {
-                updateAccountAddress(mAccount);
+                // updateAccountAddress(mAccount);
+                tvAddress.setText(mAccount.getAddress());
+
+                retrofit.balanceOf(mAccount.getAddress())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(balanceResponse -> {
+                            tvBalance.setText(String.format(Locale.KOREA, "%d", balanceResponse.getBalance()));
+
+                            setProgressBarVisibility(ProgressBar.GONE);
+                        });
             }
         }
+
+        ivToken.setOnClickListener(view -> {
+            setProgressBarVisibility(ProgressBar.VISIBLE);
+            retrofit.getAirdrop(new AddressBody(mAccount.getAddress()))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(response -> {
+                        tvBalance.setText(String.format(Locale.KOREA, "%d", response.getBalance()));
+                        setProgressBarVisibility(ProgressBar.GONE);
+                    }, Throwable::printStackTrace);
+        });
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -279,12 +301,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
     private void updateAccountAddress(Account account) {
         mTabTitles[0] = account.getAddress();
         synchronized (mDrawerList.getAdapter()) {
             mDrawerList.getAdapter().notify();
         }
     }
+    */
 
     // TODO("customize progress bar")
     private void setProgressBarVisibility(int visibility) {

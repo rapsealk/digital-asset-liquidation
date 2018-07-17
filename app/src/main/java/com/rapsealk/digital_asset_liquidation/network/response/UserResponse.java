@@ -7,6 +7,11 @@ public class UserResponse extends DefaultResponse {
 
     private String id;
 
+    public UserResponse(boolean succeed, String id) {
+        super(succeed);
+        this.id = id;
+    }
+
     public String getId() {
         return this.id;
     }

@@ -7,6 +7,10 @@ public class DefaultResponse {
 
     private boolean succeed;
 
+    public DefaultResponse(boolean succeed) {
+        this.succeed = succeed;
+    }
+
     public boolean isSucceed() {
         return this.succeed;
     }
