@@ -6,6 +6,8 @@ contract AssetManager {
 
     Token public tokenReward;
 
+    mapping (uint256 => address) public ownerOfAsset;
+
     constructor(address tokenAddress) public {
         tokenReward = Token(tokenAddress);
     }

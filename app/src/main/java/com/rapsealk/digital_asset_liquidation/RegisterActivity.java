@@ -34,11 +34,18 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
+import com.rapsealk.digital_asset_liquidation.network.body.RegisterAssetBody;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
 import com.rapsealk.digital_asset_liquidation.schema.AssetCategory;
+import com.rapsealk.digital_asset_liquidation.schema.User;
+import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -73,6 +80,9 @@ public class RegisterActivity extends AppCompatActivity {
         }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
+
+        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
+        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
         majorSpinner = (Spinner) findViewById(R.id.spn_major);
         minorSpinner = (Spinner) findViewById(R.id.spn_minor);
@@ -170,10 +180,17 @@ public class RegisterActivity extends AppCompatActivity {
                             .setValue(asset)
                             .addOnCompleteListener(this, _task -> {
                                 setProgressBarVisible(false);
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
+                                if (!task.isSuccessful()) return;
+
+                                User user = sharedPreferenceManager.getUser();
+                                retrofit.registerAsset(new RegisterAssetBody(user.getAddress(), timestamp))
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribeOn(Schedulers.io())
+                                        .subscribe(result -> {
+                                            if (!result.isSucceed()) return;
+                                            Toast.makeText(this, "성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        });
                             });
                     });
                 });

@@ -51,3 +51,9 @@ exports.balanceOf = async (req, res) => {
     console.log('balance:', balance);
     res.json({ succeed: true, balance: balance });
 };
+
+exports.registerAsset = async (req, res) => {
+    const { address, assetId } = req.body;
+    // TODO("Contract")
+    res.json({ succeed: true });
+};

@@ -30,6 +30,7 @@ server.post('/', (req, res) => {
 server.post('/accounts/create', contracts.createAccount);
 server.get('/accounts/balance', contracts.balanceOf);
 server.post('/accounts/airdrop', contracts.airdrop);
+server.post('/assets/register', contracts.registerAsset);
 // server.get('/auth', authController.get);
 // server.post('/auth', authController.post);
 //server.post('/auth/signup', authController.signUp);

@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
             imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
         }));
 
+        // ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_new_assets);
+
         mBlockScreen = (ConstraintLayout) findViewById(R.id.block_screen);
         ivAlert = (ImageView) findViewById(R.id.iv_alert);
         btnLogin = (Button) findViewById(R.id.btn_login);

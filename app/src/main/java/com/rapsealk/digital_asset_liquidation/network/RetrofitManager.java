@@ -2,8 +2,10 @@ package com.rapsealk.digital_asset_liquidation.network;
 
 import com.rapsealk.digital_asset_liquidation.GlobalVariable;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
+import com.rapsealk.digital_asset_liquidation.network.body.RegisterAssetBody;
 import com.rapsealk.digital_asset_liquidation.network.response.AccountResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.BalanceResponse;
+import com.rapsealk.digital_asset_liquidation.network.response.DefaultResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.TokenResponse;
 
 import io.reactivex.Observable;
@@ -36,10 +38,10 @@ public interface RetrofitManager {
     Observable<TokenResponse> signIn(
         @Body IdAndPasswordBody body
     );
-    */
 
     @POST("auth/signup")
     Observable<TokenResponse> signUp();
+    */
 
     @POST("accounts/create")
     Observable<AccountResponse> createAccount();
@@ -52,5 +54,10 @@ public interface RetrofitManager {
     @POST("accounts/airdrop")
     Observable<BalanceResponse> getAirdrop(
         @Body AddressBody body
+    );
+
+    @POST("assets/register")
+    Observable<DefaultResponse> registerAsset(
+        @Body RegisterAssetBody body
     );
 }

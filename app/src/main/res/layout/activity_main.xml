@@ -169,6 +169,15 @@
             app:strokeColor="@android:color/transparent"
             app:strokeWidth="1dp"/>
 
+        <!--android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_new_assets"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_history"
+            app:layout_constraintBottom_toBottomOf="parent"/-->
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_search"
             android:layout_width="48dp"
