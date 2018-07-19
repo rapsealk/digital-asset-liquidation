@@ -30,6 +30,17 @@ contract Token is BasicToken {
         emit Transfer(owner, _to, _amount);
         return balances[_to];
     }
+
+    function transfer(address _from, address _to, uint256 _amount) public returns (bool) {
+        require(_from != address(0));
+        require(_to != address(0));
+        
+        balances[_from] -= _amount;
+        balances[_to] += _amount;
+
+        emit Transfer(_from, _to, _amount);
+        return true;
+    }
 }
 
 /*

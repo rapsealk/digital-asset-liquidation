@@ -7,9 +7,11 @@ server.use(restify.plugins.bodyParser());
 
 const contracts = require('./dapp/contracts');
 
+/*
 const controller = require('./controllers');
 const authController = require('./controllers/auth');
 const userController = require('./controllers/user');
+*/
 // const Ticker = require('./utils/ticker');
 
 // const ticker = new Ticker();
@@ -31,6 +33,7 @@ server.post('/accounts/create', contracts.createAccount);
 server.get('/accounts/balance', contracts.balanceOf);
 server.post('/accounts/airdrop', contracts.airdrop);
 server.post('/assets/register', contracts.registerAsset);
+server.post('/assets/buy', contracts.buyAsset);
 // server.get('/auth', authController.get);
 // server.post('/auth', authController.post);
 //server.post('/auth/signup', authController.signUp);
