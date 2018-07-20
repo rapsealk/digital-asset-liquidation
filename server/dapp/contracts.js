@@ -1,7 +1,7 @@
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
 
-const NetworkId = '5777'
+const NetworkId = '1'; // '5777'
 
 const Token = require('../truffle/build/contracts/Token.json');
 const TokenContract = new web3.eth.Contract(Token.abi, Token.networks[NetworkId].address);
