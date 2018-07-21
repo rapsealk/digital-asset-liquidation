@@ -14,6 +14,7 @@
     <string name="btn_register">매물 등록하기</string>
     <string name="btn_history">나의 매물 보기</string>
     <string name="btn_search">매물 검색</string>
+    <string name="btn_buy">매물 구입하기</string>
 
     <string name="description_image_asset">매물 사진</string>
     <string name="title_image_asset_source">이미지 등록</string>

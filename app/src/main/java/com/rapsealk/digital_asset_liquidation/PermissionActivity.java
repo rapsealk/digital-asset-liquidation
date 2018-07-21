@@ -17,7 +17,7 @@ public class PermissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
 
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
+        AlertDialog alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setTitle(R.string.title_permission)
                 .setMessage(R.string.description_permission)
                 .setPositiveButton(R.string.btn_understood, new DialogInterface.OnClickListener() {

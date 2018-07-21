@@ -1,5 +1,6 @@
 package com.rapsealk.digital_asset_liquidation;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,6 +40,8 @@ public class MyAssetActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
         if (mCurrentUser == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
             finish();
             return;
         }

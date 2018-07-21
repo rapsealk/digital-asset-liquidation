@@ -3,10 +3,10 @@ package com.rapsealk.digital_asset_liquidation;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.rapsealk.digital_asset_liquidation.adapter.CardPagerAdapter;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
 import com.rapsealk.digital_asset_liquidation.schema.Asset;
@@ -63,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvEmail;
     private TextView tvAddress;
     private TextView tvBalance;
-    private ConstraintLayout mBlockScreen;
-    private ImageView ivAlert;
-    private Button btnLogin;
+    // private ConstraintLayout mBlockScreen;
+    // private ImageView ivAlert;
+    // private Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,17 +107,27 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+        // ViewPager with CardView
+        // TODO("https://rubensousa.github.io/2016/08/viewpagercards")
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_preview);
+        CardPagerAdapter cardAdapter = new CardPagerAdapter(this);
+        // cardAdapter.addCardItem(new CardItem());
+        viewPager.setAdapter(cardAdapter);
+        viewPager.setOffscreenPageLimit(3);
+
         FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
         FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
 
-        CarouselView cvMyAssets = (CarouselView) findViewById(R.id.carousel_my_assets);
+        // CarouselView cvMyAssets = (CarouselView) findViewById(R.id.carousel_my_assets);
         CarouselView cvNewAssets = (CarouselView) findViewById(R.id.carousel_new_assets);
 
+        /*
         cvMyAssets.setPageCount(1);
         cvMyAssets.setImageListener(((position, imageView) -> {
             imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
         }));
+        */
 
         cvNewAssets.setPageCount(1);
         cvNewAssets.setImageListener(((position, imageView) -> {
@@ -125,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         // ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_new_assets);
 
+        /*
         mBlockScreen = (ConstraintLayout) findViewById(R.id.block_screen);
         ivAlert = (ImageView) findViewById(R.id.iv_alert);
         btnLogin = (Button) findViewById(R.id.btn_login);
@@ -132,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, GlobalVariable.REQUEST_CODE_SIGN_IN);
         });
+        */
 
         // utilities
         retrofit = RetrofitManager.instance.create(RetrofitManager.class);
@@ -169,7 +182,9 @@ public class MainActivity extends AppCompatActivity {
                         Asset asset = child.getValue(Asset.class);
                         if (asset != null) assets.add(asset);
                     }
-                    initCarouselView(cvMyAssets, assets);
+                    cardAdapter.addItems(assets);
+                    viewPager.getAdapter().notifyDataSetChanged();
+                    // initCarouselView(cvMyAssets, assets);
                     initCarouselView(cvNewAssets, assets);
                 }
 
@@ -204,9 +219,13 @@ public class MainActivity extends AppCompatActivity {
             setProgressBarVisible(true);
             mUser = sharedPreferenceManager.getUser();
             Log.d(TAG, "user: " + mUser);
-            mBlockScreen.setVisibility(ConstraintLayout.GONE);
+            // mBlockScreen.setVisibility(ConstraintLayout.GONE);
             tvEmail.setText(mFirebaseUser.getEmail());
             tvAddress.setText(mUser.getAddress());
+
+            tvEmail.setOnClickListener(view -> {
+                mFirebaseAuth.signOut();
+            });
 
             retrofit.balanceOf(mUser.getAddress())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -216,7 +235,8 @@ public class MainActivity extends AppCompatActivity {
                         setProgressBarVisible(false);
                     });
         } else {
-            mBlockScreen.setVisibility(ConstraintLayout.VISIBLE);
+            // mBlockScreen.setVisibility(ConstraintLayout.VISIBLE);
+            tvEmail.setOnClickListener(null);
         }
     }
 
@@ -227,8 +247,8 @@ public class MainActivity extends AppCompatActivity {
             case GlobalVariable.REQUEST_CODE_SIGN_IN: {
                 Log.d(TAG, "REQUEST_CODE_SIGN_IN: " + (resultCode == RESULT_OK));
                 if (resultCode == RESULT_OK) {
-                    ivAlert.setVisibility(ImageView.GONE);
-                    btnLogin.setVisibility(Button.GONE);
+                    // ivAlert.setVisibility(ImageView.GONE);
+                    // btnLogin.setVisibility(Button.GONE);
                 }
             }
         }

@@ -14,16 +14,38 @@
         <item name="android:colorAccent">@color/colorAccent</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
     </style>
     
     <style name="RectIndeterminateProgressBar" parent="@style/Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateDrawable">@drawable/rect_indeterminate_progress_bar</item>
         <item name="android:minHeight">80dp</item>
         <item name="android:minWidth">200dp</item>
+    </style>
+
+    <!-- TextInputLayout -->
+    <style name="Widget.Design.TextInputLayout" parent="AppTheme">
+        <item name="hintTextAppearance">@style/AppTheme.TextFloatLabelAppearance</item>
+        <item name="errorTextAppearance">@style/AppTheme.TextErrorAppearance</item>
+    </style>
+
+    <style name="AppTheme.TextFloatLabelAppearance" parent="TextAppearance.Design.Hint">
+        <!-- Floating label appearance -->
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.TextErrorAppearance" parent="TextAppearance.Design.Error">
+        <item name="android:textColor">@android:color/holo_red_light</item>
     </style>
 
 </resources>

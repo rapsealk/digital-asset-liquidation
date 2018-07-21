@@ -15,6 +15,7 @@ public class Asset implements Parcelable {
     public String owner;
     public long timestamp;
     public String imageUrl;
+    public long appraisedAt;
 
     public long orderKey;
 
@@ -50,6 +51,7 @@ public class Asset implements Parcelable {
         owner = parcel.readString();
         timestamp = parcel.readLong();
         imageUrl = parcel.readString();
+        appraisedAt = parcel.readLong();
         orderKey = parcel.readLong();
     }
 
@@ -75,6 +77,11 @@ public class Asset implements Parcelable {
 
     public Asset setOnChain(boolean isOnChain) {
         this.isOnChain = isOnChain;
+        return this;
+    }
+
+    public Asset setAppraisedAt(long appraisedAt) {
+        this.appraisedAt = appraisedAt;
         return this;
     }
 /*
@@ -109,6 +116,7 @@ public class Asset implements Parcelable {
         dest.writeString(owner);
         dest.writeLong(timestamp);
         dest.writeString(imageUrl);
+        dest.writeLong(appraisedAt);
         dest.writeLong(orderKey);
     }
 }
