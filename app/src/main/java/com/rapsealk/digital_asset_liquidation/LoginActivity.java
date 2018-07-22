@@ -78,6 +78,8 @@ public class LoginActivity extends AppCompatActivity {
                                 User user = dataSnapshot.getValue(User.class);
                                 sharedPreferenceManager.setUser(user);
                                 setProgressBarVisible(false);
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
                                 finish();
                             }
 
@@ -101,7 +103,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case GlobalVariable.REQUEST_CODE_SIGN_UP: {
-                if (resultCode == RESULT_OK) finish();
+                if (resultCode == RESULT_OK) {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         }
     }

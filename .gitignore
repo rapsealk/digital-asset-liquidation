@@ -2,10 +2,6 @@ app/src/main/res/values/private.xml
 app/google-services.json
 .idea/
 
-server/node_modules/
-server/utils/dbconfig.json
-server/truffle/build/
-
 *.iml
 .gradle
 /local.properties

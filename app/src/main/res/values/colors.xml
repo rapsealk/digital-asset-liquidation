@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimaryLight">#F89B6C</color>
+    <color name="colorPrimary">#344955</color>
+    <color name="colorPrimaryDark">#232F34</color>
+    <color name="colorPrimaryLight">#4A6572</color>
+    <color name="colorAccent">#F9AA33</color>
+
+    <!-- Hanhwa set -->
+    <!--color name="colorPrimaryLight">#F89B6C</color>
     <color name="colorPrimary">#F37321</color>
     <color name="colorPrimaryDark">#F05000</color>
-    <!--color name="colorPrimaryLight">#FBB584</color-->
-    <color name="colorAccent">#000000</color>
+    <color name="colorAccent">#000000</color-->
 
     <!--color name="colorPrimary">#FFD707</color>
     <color name="colorPrimaryDark">#F0A90F</color>
