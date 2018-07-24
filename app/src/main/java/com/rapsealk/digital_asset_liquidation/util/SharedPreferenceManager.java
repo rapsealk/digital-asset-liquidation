@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.rapsealk.digital_asset_liquidation.schema.User;
+import com.rapsealk.digital_asset_liquidation.struct.User;
 
 /**
  * Created by rapsealk on 2018. 5. 29..

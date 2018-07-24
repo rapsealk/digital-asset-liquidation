@@ -1,4 +1,4 @@
-package com.rapsealk.digital_asset_liquidation.schema;
+package com.rapsealk.digital_asset_liquidation.struct;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,7 +15,8 @@ public class Asset implements Parcelable {
     public String owner;
     public long timestamp;
     public String imageUrl;
-    public long appraisedAt;
+    // public long appraisedAt;
+    public Appraisal appraisal;
 
     public long orderKey;
 
@@ -51,7 +52,7 @@ public class Asset implements Parcelable {
         owner = parcel.readString();
         timestamp = parcel.readLong();
         imageUrl = parcel.readString();
-        appraisedAt = parcel.readLong();
+        appraisal = parcel.readParcelable(Appraisal.class.getClassLoader());
         orderKey = parcel.readLong();
     }
 
@@ -80,10 +81,6 @@ public class Asset implements Parcelable {
         return this;
     }
 
-    public Asset setAppraisedAt(long appraisedAt) {
-        this.appraisedAt = appraisedAt;
-        return this;
-    }
 /*
     public Asset setOwner(String owner) {
         this.owner = owner;
@@ -116,7 +113,7 @@ public class Asset implements Parcelable {
         dest.writeString(owner);
         dest.writeLong(timestamp);
         dest.writeString(imageUrl);
-        dest.writeLong(appraisedAt);
+        dest.writeParcelable(appraisal, flags);
         dest.writeLong(orderKey);
     }
 }

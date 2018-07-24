@@ -17,8 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
-import com.rapsealk.digital_asset_liquidation.schema.User;
+import com.rapsealk.digital_asset_liquidation.struct.User;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 
 public class LoginActivity extends AppCompatActivity {
@@ -45,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
+        // RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
         SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
         btnLogin.setOnClickListener(view -> {
@@ -71,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
                     FirebaseUser firebaseUser = mFirebaseAuth.getCurrentUser();
+                    if (firebaseUser == null) return;
                     mFirebaseDatabase.getReference(GlobalVariable.DATABASE_USERS).child(firebaseUser.getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override

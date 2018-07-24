@@ -36,9 +36,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.network.body.RegisterAssetBody;
-import com.rapsealk.digital_asset_liquidation.schema.Asset;
-import com.rapsealk.digital_asset_liquidation.schema.AssetCategory;
-import com.rapsealk.digital_asset_liquidation.schema.User;
+import com.rapsealk.digital_asset_liquidation.struct.Asset;
+import com.rapsealk.digital_asset_liquidation.struct.AssetCategory;
+import com.rapsealk.digital_asset_liquidation.struct.User;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 
 import java.io.ByteArrayOutputStream;
@@ -115,28 +115,28 @@ public class RegisterActivity extends AppCompatActivity {
 
         assetImage.setOnClickListener(view -> {
             AlertDialog alertDialog = new AlertDialog.Builder(RegisterActivity.this)
-                    .setTitle(R.string.title_image_asset_source)
-                    .setItems(R.array.array_image_source, (dialog, which) -> {
-                        switch (which) {
-                            case 0: {   // camera
-                                if (ContextCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(RegisterActivity.this, new String[] { Manifest.permission.CAMERA }, GlobalVariable.REQUEST_CODE_CAMERA);
-                                    return;
-                                }
-                                takePhotoWithCamera();
-                                break;
+                .setTitle(R.string.title_image_asset_source)
+                .setItems(R.array.array_image_source, (dialog, which) -> {
+                    switch (which) {
+                        case 0: {   // camera
+                            if (ContextCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(RegisterActivity.this, new String[] { Manifest.permission.CAMERA }, GlobalVariable.REQUEST_CODE_CAMERA);
+                                return;
                             }
-                            case 1: {   // gallery
-                                if (ContextCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(RegisterActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, GlobalVariable.REQUEST_CODE_GALLERY);
-                                    return;
-                                }
-                                readImageFromGallery();
-                                break;
-                            }
+                            takePhotoWithCamera();
+                            break;
                         }
-                    })
-                    .create();
+                        case 1: {   // gallery
+                            if (ContextCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(RegisterActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, GlobalVariable.REQUEST_CODE_GALLERY);
+                                return;
+                            }
+                            readImageFromGallery();
+                            break;
+                        }
+                    }
+                })
+                .create();
             alertDialog.show();
         });
 
@@ -171,12 +171,12 @@ public class RegisterActivity extends AppCompatActivity {
                         String url = urlTask.getResult().toString();
                         Log.d(TAG, "URL: " + url);
                         Asset asset = new Asset(mCurrentUser.getUid(), timestamp, url)
-                                .setCategory(new AssetCategory(majorCategory, minorCategory))
-                                .setName(assetName.getText().toString())
-                                .setBuildDate(buildDate.getText().toString())
-                                .setPrice(Integer.parseInt(assetPrice.getText().toString()))
-                                .setOnChain(switchChain.isChecked());
-                        mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET).child(String.valueOf(timestamp))
+                            .setCategory(new AssetCategory(majorCategory, minorCategory))
+                            .setName(assetName.getText().toString())
+                            .setBuildDate(buildDate.getText().toString())
+                            .setPrice(Integer.parseInt(assetPrice.getText().toString()))
+                            .setOnChain(switchChain.isChecked());
+                        mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ON_APPRAISE).child(String.valueOf(timestamp))
                             .setValue(asset)
                             .addOnCompleteListener(this, _task -> {
                                 setProgressBarVisible(false);

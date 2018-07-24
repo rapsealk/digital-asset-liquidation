@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
-import com.rapsealk.digital_asset_liquidation.schema.User;
+import com.rapsealk.digital_asset_liquidation.struct.User;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 
 import java.text.SimpleDateFormat;

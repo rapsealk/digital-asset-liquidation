@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.rapsealk.digital_asset_liquidation.schema.Asset;
+import com.rapsealk.digital_asset_liquidation.struct.Asset;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

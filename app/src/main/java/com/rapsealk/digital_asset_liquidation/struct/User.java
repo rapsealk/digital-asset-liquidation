@@ -1,4 +1,4 @@
-package com.rapsealk.digital_asset_liquidation.schema;
+package com.rapsealk.digital_asset_liquidation.struct;
 
 import java.util.Locale;
 

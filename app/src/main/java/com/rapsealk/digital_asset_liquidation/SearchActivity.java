@@ -16,7 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.rapsealk.digital_asset_liquidation.schema.Asset;
+import com.rapsealk.digital_asset_liquidation.struct.Asset;
 import com.rapsealk.digital_asset_liquidation.view.AnimatedRecyclerView;
 
 import java.util.ArrayList;
