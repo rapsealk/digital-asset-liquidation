@@ -4,9 +4,9 @@ import com.rapsealk.digital_asset_liquidation.GlobalVariable;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
 import com.rapsealk.digital_asset_liquidation.network.body.RegisterAssetBody;
 import com.rapsealk.digital_asset_liquidation.network.response.AccountResponse;
+import com.rapsealk.digital_asset_liquidation.network.response.AssetsResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.BalanceResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.DefaultResponse;
-import com.rapsealk.digital_asset_liquidation.network.response.TokenResponse;
 
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
@@ -28,21 +28,6 @@ public interface RetrofitManager {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    /*
-    @GET("user")
-    Observable<UserResponse> getUser(
-        @Header("Authorization") String authorization
-    );
-
-    @POST("auth/signin")
-    Observable<TokenResponse> signIn(
-        @Body IdAndPasswordBody body
-    );
-
-    @POST("auth/signup")
-    Observable<TokenResponse> signUp();
-    */
-
     @POST("accounts/create")
     Observable<AccountResponse> createAccount();
 
@@ -51,9 +36,19 @@ public interface RetrofitManager {
         @Query("address") String address
     );
 
+    @GET("accounts/balance/ether")
+    Observable<DefaultResponse> etherBalanceOf(
+        @Query("address") String address
+    );
+
     @POST("accounts/airdrop")
     Observable<BalanceResponse> getAirdrop(
         @Body AddressBody body
+    );
+
+    @GET("assets")
+    Observable<AssetsResponse> getAssetsOf(
+        @Query("address") String address
     );
 
     @POST("assets/register")

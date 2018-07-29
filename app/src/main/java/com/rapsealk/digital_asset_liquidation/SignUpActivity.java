@@ -10,6 +10,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -66,6 +67,7 @@ public class SignUpActivity extends AppCompatActivity
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
         birthdate = dateFormat.format(System.currentTimeMillis());
+        tvBirthdate.setText(birthdate);
 
         tvBirthdate.setOnClickListener(view -> buildDatePickerDialog());
 
@@ -81,7 +83,10 @@ public class SignUpActivity extends AppCompatActivity
                 .addOnCompleteListener(this, task -> {
                     setProgressBarVisible(false);
 
-                    if (!task.isSuccessful()) return;
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(this, "Unable to createUserWithEmailAndPassword.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     setProgressBarVisible(true);
 
@@ -94,7 +99,10 @@ public class SignUpActivity extends AppCompatActivity
 
                             setProgressBarVisible(false);
 
-                            if (!updateTask.isSuccessful()) return;
+                            if (!updateTask.isSuccessful()) {
+                                Toast.makeText(this, "Unable to updateProfile.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
                             setProgressBarVisible(true);
 
@@ -105,19 +113,26 @@ public class SignUpActivity extends AppCompatActivity
                                         String address = response.getAddress();
                                         User user = new User(firebaseUser.getUid(), name, birthdate, address, cbAdmin.isChecked());
                                         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_USERS).child(user.getUid())
-                                            .setValue(user)
-                                            .addOnCompleteListener(dbTask -> {
+                                                .setValue(user)
+                                                .addOnCompleteListener(dbTask -> {
 
-                                                setProgressBarVisible(false);
+                                                    setProgressBarVisible(false);
 
-                                                if (!dbTask.isSuccessful()) return;
+                                                    if (!dbTask.isSuccessful()) {
+                                                        Toast.makeText(this, "Unable to setValue on Firebase Database.", Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
 
-                                                sharedPreferenceManager.setUser(user);
+                                                    sharedPreferenceManager.setUser(user);
 
-                                                setResult(RESULT_OK);
-                                                finish();
-                                            });
-                                    }, Throwable::printStackTrace);
+                                                    setResult(RESULT_OK);
+                                                    finish();
+                                                });
+                                        // }, Throwable::printStackTrace);
+                                    }, throwable -> {
+                                        Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                        throwable.printStackTrace();
+                                    });
                         });
                 });
 

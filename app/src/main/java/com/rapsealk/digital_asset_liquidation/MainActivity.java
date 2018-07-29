@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -101,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        /*
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser != null) {
             setProgressBarVisible(true);
@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             // mBlockScreen.setVisibility(ConstraintLayout.VISIBLE);
             tvEmail.setOnClickListener(null);
         }
-        */
     }
 
     /*

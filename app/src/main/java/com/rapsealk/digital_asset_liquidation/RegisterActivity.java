@@ -183,6 +183,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (!task.isSuccessful()) return;
 
                                 User user = sharedPreferenceManager.getUser();
+                                Log.d(TAG, "Address: " + user.getAddress());
                                 retrofit.registerAsset(new RegisterAssetBody(user.getAddress(), timestamp))
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribeOn(Schedulers.io())

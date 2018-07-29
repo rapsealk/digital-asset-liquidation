@@ -12,8 +12,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">@android:color/white</item>
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
@@ -33,6 +33,7 @@
         <item name="android:indeterminateDrawable">@drawable/rect_indeterminate_progress_bar</item>
         <item name="android:minHeight">80dp</item>
         <item name="android:minWidth">200dp</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <!-- TextInputLayout -->
