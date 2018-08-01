@@ -38,6 +38,7 @@ import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvEmail;
     private TextView tvAddress;
     private TextView tvBalance;
+
+    private int mViewPagerCurrentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
             setProgressBarVisible(true);
             mUser = sharedPreferenceManager.getUser();
             Log.d(TAG, "user: " + mUser);
-            // mBlockScreen.setVisibility(ConstraintLayout.GONE);
             tvEmail.setText(mFirebaseUser.getEmail());
             tvAddress.setText(mUser.getAddress());
 
@@ -123,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
                         setProgressBarVisible(false);
                     });
         } else {
-            // mBlockScreen.setVisibility(ConstraintLayout.VISIBLE);
             tvEmail.setOnClickListener(null);
         }
     }
@@ -156,32 +157,43 @@ public class MainActivity extends AppCompatActivity {
 
         // ViewPager with CardView
         // TODO("https://rubensousa.github.io/2016/08/viewpagercards")
+        // ViewPager with Circular scroll
+        // |B|C|<A|B|C>|A|B|
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_preview);
         CardPagerAdapter cardAdapter = new CardPagerAdapter(this);
-        // cardAdapter.addCardItem(new CardItem());
         viewPager.setAdapter(cardAdapter);
         viewPager.setOffscreenPageLimit(3);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // TODO
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mViewPagerCurrentPosition = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // if (mViewPagerCurrentPosition == 0) viewPager.setCurrentItem(3, false);
+                // else if (mViewPagerCurrentPosition == 4) viewPager.setCurrentItem(1, false);
+                if (mViewPagerCurrentPosition == 1) viewPager.setCurrentItem(4, false);
+                else if (mViewPagerCurrentPosition == 5) viewPager.setCurrentItem(2, false);
+            }
+        });
 
         FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
         FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
 
-        // CarouselView cvMyAssets = (CarouselView) findViewById(R.id.carousel_my_assets);
         CarouselView cvNewAssets = (CarouselView) findViewById(R.id.carousel_new_assets);
-
-        /*
-        cvMyAssets.setPageCount(1);
-        cvMyAssets.setImageListener(((position, imageView) -> {
-            imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
-        }));
-        */
 
         cvNewAssets.setPageCount(1);
         cvNewAssets.setImageListener(((position, imageView) -> {
             imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
         }));
-
-        // ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_new_assets);
 
         // utilities
         retrofit = RetrofitManager.instance.create(RetrofitManager.class);
@@ -219,10 +231,23 @@ public class MainActivity extends AppCompatActivity {
                             Asset asset = child.getValue(Asset.class);
                             if (asset != null) assets.add(asset);
                         }
+                        // FIXME a better way
+                        int idx = 1;
+                        for (DataSnapshot child: dataSnapshot.getChildren()) {
+                            Asset asset = child.getValue(Asset.class);
+                            if (idx == 1) assets.add(asset);
+                            else if (idx == 2) {
+                                assets.add(asset);
+                                assets.add(0, asset);
+                            }
+                            else if (idx == 3) assets.add(1, asset);
+                            idx += 1;
+                        }
                         cardAdapter.addItems(assets);
                         viewPager.getAdapter().notifyDataSetChanged();
-                        // initCarouselView(cvMyAssets, assets);
-                        initCarouselView(cvNewAssets, assets);
+                        // viewPager.setCurrentItem(1);
+                        viewPager.setCurrentItem(2);
+                        initCarouselView(cvNewAssets, assets.subList(2, 5));
                     }
 
                     @Override
@@ -258,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initCarouselView(CarouselView view, ArrayList<Asset> assets) {
+    private void initCarouselView(CarouselView view, List<Asset> assets) {
         ImageListener imageListener = new ImageListener() {
             @Override
             public void setImageForPosition(int position, ImageView imageView) {

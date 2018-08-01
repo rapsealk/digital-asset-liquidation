@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.rapsealk.digital_asset_liquidation.struct.Asset;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 public class AssetActivity extends AppCompatActivity {
 
     @Override
@@ -20,12 +22,14 @@ public class AssetActivity extends AppCompatActivity {
 
         ImageView ivAsset = (ImageView) findViewById(R.id.iv_asset);
         TextView tvAssetName = (TextView) findViewById(R.id.tv_asset_name);
+        TextView tvAssetPrice = (TextView) findViewById(R.id.tv_asset_price);
 
         Asset asset = (Asset) getIntent().getExtras().getParcelable("asset");
 
         Picasso.get().load(asset.imageUrl).fit().centerCrop().into(ivAsset);
 
         tvAssetName.setText(asset.name);
+        tvAssetPrice.setText(String.format(Locale.KOREA, "%d", asset.price));
 
         ibBack.setOnClickListener(view -> finish());
     }
