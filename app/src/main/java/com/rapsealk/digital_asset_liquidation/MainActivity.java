@@ -4,18 +4,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
+import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +44,7 @@ import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
@@ -57,14 +57,15 @@ public class MainActivity extends AppCompatActivity {
     RetrofitManager retrofit;
     SharedPreferenceManager sharedPreferenceManager;
 
-    final private String[] mTabTitles = { "Tab#1", "Tab#2", "Tab#3" };
-    // private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-
     private ProgressBar progressBar;
     private TextView tvEmail;
     private TextView tvAddress;
     private TextView tvBalance;
+
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
+
+    private TextView mNavigationAddress;
 
     private int mViewPagerCurrentPosition;
 
@@ -113,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
             tvEmail.setText(mFirebaseUser.getEmail());
             tvAddress.setText(mUser.getAddress());
 
+            mNavigationAddress.setText(mUser.getAddress());
+
             tvEmail.setOnClickListener(view -> {
                 mFirebaseAuth.signOut();
             });
@@ -139,14 +142,13 @@ public class MainActivity extends AppCompatActivity {
     */
 
     private void initLayout() {
-        // mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-        // set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mTabTitles));
-        mDrawerList.setOnItemClickListener((parent, view, position, id) -> {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        // mNavigationView.setItemIconTintList(null);
 
-        });
+        mNavigationAddress = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.tv_nav_address);
 
         tvEmail = (TextView) findViewById(R.id.tv_user_email);
         tvAddress = (TextView) findViewById(R.id.tv_address);
@@ -209,15 +211,6 @@ public class MainActivity extends AppCompatActivity {
                         tvBalance.setText(String.format(Locale.KOREA, "%d", response.getBalance()));
                         setProgressBarVisible(false);
                     }, Throwable::printStackTrace);
-        });
-
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    // TODO("Update Address");
-                }
-            }
         });
 
         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
@@ -309,5 +302,25 @@ public class MainActivity extends AppCompatActivity {
         view.setImageListener(imageListener);
         view.setImageClickListener(imageClickListener);
         view.setPageCount(assets.size());
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Intent intent = new Intent();
+        switch (item.getItemId()) {
+            case R.id.nav_item_my_assets:
+                intent.setClass(this, MyAssetActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_item_register:
+                intent.setClass(this, RegisterActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_item_search:
+                intent.setClass(this, SearchActivity.class);
+                startActivity(intent);
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

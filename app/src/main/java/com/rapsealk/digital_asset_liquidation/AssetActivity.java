@@ -19,6 +19,7 @@ public class AssetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_asset);
 
         ImageButton ibBack = (ImageButton) findViewById(R.id.ib_back);
+        TextView tvTitle = (TextView) findViewById(R.id.tv_title);
 
         ImageView ivAsset = (ImageView) findViewById(R.id.iv_asset);
         TextView tvAssetName = (TextView) findViewById(R.id.tv_asset_name);
@@ -27,6 +28,8 @@ public class AssetActivity extends AppCompatActivity {
         Asset asset = (Asset) getIntent().getExtras().getParcelable("asset");
 
         Picasso.get().load(asset.imageUrl).fit().centerCrop().into(ivAsset);
+
+        tvTitle.setText(asset.name);
 
         tvAssetName.setText(asset.name);
         tvAssetPrice.setText(String.format(Locale.KOREA, "%d", asset.price));

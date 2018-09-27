@@ -5,6 +5,8 @@
     <color name="colorPrimaryDark">#232F34</color>
     <color name="colorPrimaryLight">#4A6572</color>
     <color name="colorAccent">#F9AA33</color>
+    <color name="colorAccentDark">#E88F12</color>
+    <color name="colorAccentLight">#FFC650</color>
 
     <!-- Hanhwa set -->
     <!--color name="colorPrimaryLight">#F89B6C</color>

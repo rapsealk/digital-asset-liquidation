@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:padding="16dp"
+    android:clickable="true"
+    android:layout_gravity="bottom"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:background="@drawable/nav_header">
+
+    <ImageView
+        android:id="@+id/iv_nav_header"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_account_circle" />
+
+    <TextView
+        android:id="@+id/tv_nav_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/iv_nav_header"
+        android:paddingTop="16dp"
+        android:text="@string/app_name"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryLight"/>
+
+</android.support.constraint.ConstraintLayout>
