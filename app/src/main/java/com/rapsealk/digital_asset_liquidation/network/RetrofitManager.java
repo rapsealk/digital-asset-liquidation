@@ -3,6 +3,7 @@ package com.rapsealk.digital_asset_liquidation.network;
 import com.rapsealk.digital_asset_liquidation.GlobalVariable;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
 import com.rapsealk.digital_asset_liquidation.network.body.RegisterAssetBody;
+import com.rapsealk.digital_asset_liquidation.network.body.TradeAssetBody;
 import com.rapsealk.digital_asset_liquidation.network.response.AccountResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.AssetsResponse;
 import com.rapsealk.digital_asset_liquidation.network.response.BalanceResponse;
@@ -54,5 +55,10 @@ public interface RetrofitManager {
     @POST("assets/register")
     Observable<DefaultResponse> registerAsset(
         @Body RegisterAssetBody body
+    );
+
+    @POST("assets/trade")
+    Observable<BalanceResponse> tradeAsset(
+        @Body TradeAssetBody body
     );
 }

@@ -25,7 +25,7 @@
         </activity>
         <activity
             android:name=".SignUpActivity"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".LoginActivity"
             android:windowSoftInputMode="adjustResize" />
@@ -39,6 +39,7 @@
         <activity android:name=".MyAssetActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".AssetActivity" />
+        <activity android:name=".PurchaseActivity"></activity>
     </application>
 
 </manifest>

@@ -25,4 +25,6 @@
     <string name="detail_on_chain">체인 등록</string>
     <string name="detail_owner">등록자</string>
     <string name="detail_post_time">등록일시</string>
+
+    <string name="purchase_amount">구매량</string>
 </resources>
