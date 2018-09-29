@@ -186,8 +186,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
-        FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
+        // FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
+        // FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
 
         CarouselView cvNewAssets = (CarouselView) findViewById(R.id.carousel_new_assets);
@@ -249,20 +249,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
 
+        /*
         fabRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
+        */
 
         btnHistory.setOnClickListener(view -> {
             Intent intent = new Intent(this, MyAssetActivity.class);
             startActivity(intent);
         });
 
+        /*
         fabSearch.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         });
+        */
     }
 
     // TODO("customize progress bar")
