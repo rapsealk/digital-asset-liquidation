@@ -33,9 +33,6 @@ import com.rapsealk.digital_asset_liquidation.struct.Asset;
 import com.rapsealk.digital_asset_liquidation.struct.User;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
-import com.synnapps.carouselview.CarouselView;
-import com.synnapps.carouselview.ImageClickListener;
-import com.synnapps.carouselview.ImageListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -190,13 +187,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
         Button btnHistory = (Button) findViewById(R.id.btn_history);
 
-        CarouselView cvNewAssets = (CarouselView) findViewById(R.id.carousel_new_assets);
-
-        cvNewAssets.setPageCount(1);
-        cvNewAssets.setImageListener(((position, imageView) -> {
-            imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
-        }));
-
         // utilities
         retrofit = RetrofitManager.instance.create(RetrofitManager.class);
         sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
@@ -240,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         viewPager.getAdapter().notifyDataSetChanged();
                         // viewPager.setCurrentItem(1);
                         viewPager.setCurrentItem(2);
-                        initCarouselView(cvNewAssets, assets.subList(2, 5));
                     }
 
                     @Override
@@ -278,34 +267,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             progressBar.setVisibility(ProgressBar.GONE);
         }
-    }
-
-    private void initCarouselView(CarouselView view, List<Asset> assets) {
-        ImageListener imageListener = new ImageListener() {
-            @Override
-            public void setImageForPosition(int position, ImageView imageView) {
-                Asset asset = assets.get(position);
-                Picasso.get()
-                        .load(asset.imageUrl)
-                        .placeholder(R.color.cardview_dark_background)
-                        .fit()
-                        .centerCrop()
-                        .into(imageView);
-            }
-        };
-        ImageClickListener imageClickListener = new ImageClickListener() {
-            @Override
-            public void onClick(int position) {
-                Asset asset = assets.get(position);
-                Toast.makeText(MainActivity.this, "Asset: " + asset.name, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, AssetActivity.class)
-                        .putExtra("asset", asset);
-                startActivity(intent);
-            }
-        };
-        view.setImageListener(imageListener);
-        view.setImageClickListener(imageClickListener);
-        view.setPageCount(assets.size());
     }
 
     @Override

@@ -151,21 +151,6 @@
                 android:textStyle="bold"
                 android:text="@string/btn_history" />
 
-            <com.synnapps.carouselview.CarouselView
-                android:id="@+id/carousel_new_assets"
-                android:layout_width="match_parent"
-                android:layout_height="210dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_history"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:fillColor="@color/colorPrimary"
-                app:pageColor="@color/colorAccent"
-                app:radius="6dp"
-                app:slideInterval="3000"
-                app:strokeColor="@android:color/transparent"
-                app:strokeWidth="1dp"/>
-
             <!--android.support.v4.view.ViewPager
                 android:id="@+id/view_pager_new_assets"
                 android:layout_width="match_parent"
