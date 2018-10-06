@@ -32,14 +32,14 @@
         <activity
             android:name=".PermissionActivity"
             android:theme="@style/SplashTheme" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"/>
         <activity
             android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".MyAssetActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".AssetActivity" />
-        <activity android:name=".PurchaseActivity"></activity>
+        <activity android:name=".PurchaseActivity"/>
     </application>
 
 </manifest>
