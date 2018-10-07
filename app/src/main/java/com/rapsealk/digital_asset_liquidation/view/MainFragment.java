@@ -30,14 +30,13 @@ public class MainFragment extends Fragment implements ViewPager.OnPageChangeList
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         // ViewPager: Asset preview
         mPreviewPager = (ViewPager) view.findViewById(R.id.view_pager_preview);

@@ -9,8 +9,8 @@
     android:layout_marginBottom="5dp"
     android:layout_marginStart="15dp"
     android:layout_marginEnd="15dp"
-    app:cardCornerRadius="15dp"
-    android:elevation="4dp">
+    android:elevation="4dp"
+    android:backgroundTint="@android:color/white">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -34,28 +34,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Asset Name"/>
+                tools:text="Asset Name"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/tv_asset_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/tv_asset_name"
-                tools:text="$100,000,000"/>
+                tools:text="$100,000,000"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/tv_asset_category_major"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/tv_asset_price"
-                tools:text="대분류"/>
+                tools:text="대분류"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/tv_asset_category_minor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/tv_asset_category_major"
-                tools:text="소분류"/>
+                tools:text="소분류"
+                android:textColor="@android:color/black"/>
 
         </android.support.constraint.ConstraintLayout>
 

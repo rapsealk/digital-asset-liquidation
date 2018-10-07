@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
                     .subscribeOn(Schedulers.io())
                     .subscribe(balanceResponse -> {
                         tvBalance.setText(String.format(Locale.KOREA, "%d", balanceResponse.getBalance()));
+                        updateAppIconBadge(balanceResponse.getBalance());
                         // setProgressBarVisible(false);
                     });
         } else {
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity
 
         // TabLayout (https://coding-factory.tistory.com/206)
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        final String[] tabItems = { "Tab #1", "Tab #2", "Tab #3" };
+        final String[] tabItems = { "Main", "Search", "Settings" };
         for (String item: tabItems) {
             tabLayout.addTab(tabLayout.newTab().setText(item));
         }
@@ -182,6 +183,7 @@ public class MainActivity extends AppCompatActivity
                     .subscribeOn(Schedulers.io())
                     .subscribe(response -> {
                         tvBalance.setText(String.format(Locale.KOREA, "%d", response.getBalance()));
+                        updateAppIconBadge(response.getBalance());
                         // setProgressBarVisible(false);
                     }, Throwable::printStackTrace);
         });
@@ -258,5 +260,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    // https://medium.com/marojuns-android/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EC%95%84%EC%9D%B4%EC%BD%98-%EB%B1%83%EC%A7%80-%EC%99%84%EC%A0%84%EB%B6%84%ED%95%B4-c27028014e4d
+    private void updateAppIconBadge(int count) {
+        /*
+        Intent intent = new Intent("android.intent.action.BADGE_COUND_UPDATE");
+        intent.putExtra("badge_count_package_name", getComponentName().getPackageName());
+        intent.putExtra("badge_count_class_name", getComponentName().getClassName());
+        intent.putExtra("badge_count", count);
+        sendBroadcast(intent);
+        */
     }
 }

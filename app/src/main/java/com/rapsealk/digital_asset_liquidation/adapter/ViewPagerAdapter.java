@@ -6,13 +6,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.rapsealk.digital_asset_liquidation.view.AssetFragment;
 import com.rapsealk.digital_asset_liquidation.view.MainFragment;
-
-import java.util.List;
+import com.rapsealk.digital_asset_liquidation.view.SearchFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private int mNumberOfFragments;
-    private List<Fragment> mFragments;
+    // private List<Fragment> mFragments;
 
     public ViewPagerAdapter(FragmentManager fm, int numberOfFragments) {
         super(fm);
@@ -32,6 +31,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return new MainFragment();
             case 1:
+                return new SearchFragment();
             case 2:
                 return new AssetFragment();
             default:
