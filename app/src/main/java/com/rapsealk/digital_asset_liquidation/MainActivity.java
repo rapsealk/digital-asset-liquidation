@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +23,7 @@ import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
 import com.rapsealk.digital_asset_liquidation.struct.User;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
+import com.rapsealk.digital_asset_liquidation.view.SwipableViewPager;
 
 import java.util.Locale;
 
@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity
     private final String TAG = MainActivity.class.getSimpleName();
 
     private FirebaseAuth mFirebaseAuth;
-    // private FirebaseDatabase mFirebaseDatabase;
 
     private FirebaseUser mFirebaseUser;
     private User mUser;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity
     RetrofitManager retrofit;
     SharedPreferenceManager sharedPreferenceManager;
 
-    private ViewPager mViewPager;
+    private SwipableViewPager mViewPager;
 
     // private ProgressBar progressBar;
     private TextView tvEmail;
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity
     private TextView tvBalance;
 
     private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
 
     private TextView mNavigationAddress;
 
@@ -77,7 +75,6 @@ public class MainActivity extends AppCompatActivity
         // ================================================================================================
 
         mFirebaseAuth = FirebaseAuth.getInstance();
-        // mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         if (mFirebaseAuth.getCurrentUser() == null) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -134,8 +131,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
         // mNavigationView.setItemIconTintList(null);
 
         // TabLayout (https://coding-factory.tistory.com/206)
@@ -147,7 +144,8 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         // ViewPager
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mViewPager = (SwipableViewPager) findViewById(R.id.view_pager);
+        mViewPager.setPagingEnabled(false);
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 3);
         mViewPager.setAdapter(adapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -159,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         */
 
-        mNavigationAddress = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.tv_nav_address);
+        mNavigationAddress = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_address);
 
         tvEmail = (TextView) findViewById(R.id.tv_user_email);
         tvAddress = (TextView) findViewById(R.id.tv_address);
