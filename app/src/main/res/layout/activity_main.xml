@@ -104,120 +104,95 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager_preview"
+        <com.rapsealk.digital_asset_liquidation.view.SwipableViewPager
+            android:id="@+id/view_pager"
             android:layout_width="match_parent"
-            android:layout_height="320dp"
-            android:foregroundGravity="bottom"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingBottom="30dp"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp"
+            android:layout_marginBottom="56dp"
+            app:layout_constraintBottom_toTopOf="@id/tab_layout"
+            android:background="@android:color/holo_blue_light"/>
 
-        <!--com.synnapps.carouselview.CarouselView
-            android:id="@+id/carousel_my_assets"
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/colorPrimary"/>
+
+        <!--android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottom_navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@android:color/holo_blue_light"
+            app:itemBackground="@color/colorPrimary"
+            app:itemIconTint="@color/colorPrimaryDark"
+            app:itemTextColor="@color/colorAccent"
+            app:menu="@menu/bottom_navigation"/-->
+
+        <!--
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            app:fillColor="@color/colorPrimary"
-            app:pageColor="@color/colorAccent"
-            app:radius="6dp"
-            app:slideInterval="3000"
-            app:strokeColor="@android:color/transparent"
-            app:strokeWidth="1dp"/-->
+            android:layout_marginTop="56dp">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_register"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintEnd_toEndOf="@id/view_pager_preview"
-            app:layout_constraintBottom_toBottomOf="@id/view_pager_preview"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
-            app:elevation="4dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:src="@drawable/ic_control_point"/>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/view_pager_preview"
+                android:layout_width="match_parent"
+                android:layout_height="275dp"
+                android:foregroundGravity="bottom"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingTop="10dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:background="@color/colorAccent"/>
 
-        <Button
-            android:id="@+id/btn_history"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_pager_preview"
-            app:layout_constraintBottom_toTopOf="@id/carousel_new_assets"
-            android:background="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:text="@string/btn_history" />
+            <Button
+                android:id="@+id/btn_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginTop="-30dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_pager_preview"
+                android:background="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:text="@string/btn_history" />
 
-        <com.synnapps.carouselview.CarouselView
-            android:id="@+id/carousel_new_assets"
-            android:layout_width="match_parent"
-            android:layout_height="210dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_history"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:fillColor="@color/colorPrimary"
-            app:pageColor="@color/colorAccent"
-            app:radius="6dp"
-            app:slideInterval="3000"
-            app:strokeColor="@android:color/transparent"
-            app:strokeWidth="1dp"/>
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="@style/RectIndeterminateProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@android:color/transparent"
+                android:indeterminate="true"
+                android:elevation="4dp"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
-        <!--android.support.v4.view.ViewPager
-            android:id="@+id/view_pager_new_assets"
-            android:layout_width="match_parent"
-            android:layout_height="256dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_history"
-            app:layout_constraintBottom_toBottomOf="parent"/-->
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_search"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintEnd_toEndOf="@id/carousel_new_assets"
-            app:layout_constraintBottom_toBottomOf="@id/carousel_new_assets"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
-            app:elevation="4dp"
-            android:backgroundTintMode="@color/colorPrimary"
-            android:src="@drawable/ic_icons8_search_48"/>
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="@style/RectIndeterminateProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@android:color/transparent"
-            android:indeterminate="true"
-            android:elevation="4dp"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+        </android.support.constraint.ConstraintLayout>
+        -->
 
     </android.support.constraint.ConstraintLayout>
 
     <!-- Navigation Drawer -->
-    <ListView
-        android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:background="@color/colorPrimaryLight"/>
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

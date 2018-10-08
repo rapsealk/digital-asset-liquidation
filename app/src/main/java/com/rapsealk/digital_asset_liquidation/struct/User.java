@@ -14,6 +14,14 @@ public class User {
     private String address;
     private boolean admin;
 
+    public User() {
+        this.uid = "no-uid";
+        this.name = "no-name";
+        this.birthdate = "1970-01-01";
+        this.address = "null@null.null";
+        this.admin = false;
+    }
+
     public User(String uid, String name, String birthdate, String address, boolean admin) {
         this.uid = uid;
         this.name = name;

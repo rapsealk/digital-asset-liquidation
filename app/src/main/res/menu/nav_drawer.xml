@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/nav_item_my_assets"
+            android:icon="@drawable/ic_arrow_left"
+            android:title="@string/btn_history"/>
+
+        <item
+            android:id="@+id/nav_item_register"
+            android:icon="@drawable/ic_control_point"
+            android:title="@string/btn_register"/>
+
+        <!--item
+            android:id="@+id/nav_item_a"
+            android:icon="@drawable/ic_arrow_left"
+            android:title="@string/btn_buy"/-->
+
+    </group>
+
+    <group android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/nav_item_search"
+            android:icon="@drawable/ic_icons8_search_48"
+            android:title="@string/btn_search"/>
+
+    </group>
+
+</menu>

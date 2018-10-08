@@ -3,53 +3,39 @@ package com.rapsealk.digital_asset_liquidation;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.rapsealk.digital_asset_liquidation.adapter.CardPagerAdapter;
+import com.rapsealk.digital_asset_liquidation.adapter.ViewPagerAdapter;
 import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
 import com.rapsealk.digital_asset_liquidation.network.body.AddressBody;
-import com.rapsealk.digital_asset_liquidation.struct.Asset;
 import com.rapsealk.digital_asset_liquidation.struct.User;
 import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
-import com.squareup.picasso.Picasso;
-import com.synnapps.carouselview.CarouselView;
-import com.synnapps.carouselview.ImageClickListener;
-import com.synnapps.carouselview.ImageListener;
+import com.rapsealk.digital_asset_liquidation.view.SwipableViewPager;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
 
     private FirebaseUser mFirebaseUser;
     private User mUser;
@@ -57,16 +43,16 @@ public class MainActivity extends AppCompatActivity {
     RetrofitManager retrofit;
     SharedPreferenceManager sharedPreferenceManager;
 
-    final private String[] mTabTitles = { "Tab#1", "Tab#2", "Tab#3" };
-    // private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    private SwipableViewPager mViewPager;
 
-    private ProgressBar progressBar;
+    // private ProgressBar progressBar;
     private TextView tvEmail;
     private TextView tvAddress;
     private TextView tvBalance;
 
-    private int mViewPagerCurrentPosition;
+    private DrawerLayout mDrawerLayout;
+
+    private TextView mNavigationAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         // ================================================================================================
 
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         if (mFirebaseAuth.getCurrentUser() == null) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -107,11 +92,13 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser != null) {
-            setProgressBarVisible(true);
+            // setProgressBarVisible(true);
             mUser = sharedPreferenceManager.getUser();
             Log.d(TAG, "user: " + mUser);
             tvEmail.setText(mFirebaseUser.getEmail());
             tvAddress.setText(mUser.getAddress());
+
+            mNavigationAddress.setText(mUser.getAddress());
 
             tvEmail.setOnClickListener(view -> {
                 mFirebaseAuth.signOut();
@@ -122,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
                     .subscribeOn(Schedulers.io())
                     .subscribe(balanceResponse -> {
                         tvBalance.setText(String.format(Locale.KOREA, "%d", balanceResponse.getBalance()));
-                        setProgressBarVisible(false);
+                        updateAppIconBadge(balanceResponse.getBalance());
+                        // setProgressBarVisible(false);
                     });
         } else {
             tvEmail.setOnClickListener(null);
@@ -139,61 +127,49 @@ public class MainActivity extends AppCompatActivity {
     */
 
     private void initLayout() {
-        // mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-        // set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mTabTitles));
-        mDrawerList.setOnItemClickListener((parent, view, position, id) -> {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        });
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        // mNavigationView.setItemIconTintList(null);
+
+        // TabLayout (https://coding-factory.tistory.com/206)
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        final String[] tabItems = { "Main", "Search", "Settings" };
+        for (String item: tabItems) {
+            tabLayout.addTab(tabLayout.newTab().setText(item));
+        }
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        // ViewPager
+        mViewPager = (SwipableViewPager) findViewById(R.id.view_pager);
+        mViewPager.setPagingEnabled(false);
+        final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 3);
+        mViewPager.setAdapter(adapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.addOnTabSelectedListener(this);
+
+        /* BottomNavigation
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_view);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        */
+
+        mNavigationAddress = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_address);
 
         tvEmail = (TextView) findViewById(R.id.tv_user_email);
         tvAddress = (TextView) findViewById(R.id.tv_address);
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ImageView ivToken = (ImageView) findViewById(R.id.iv_token);
 
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        // progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        // ViewPager with CardView
-        // TODO("https://rubensousa.github.io/2016/08/viewpagercards")
-        // ViewPager with Circular scroll
-        // |B|C|<A|B|C>|A|B|
-        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_preview);
-        CardPagerAdapter cardAdapter = new CardPagerAdapter(this);
-        viewPager.setAdapter(cardAdapter);
-        viewPager.setOffscreenPageLimit(3);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // TODO
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                mViewPagerCurrentPosition = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                // if (mViewPagerCurrentPosition == 0) viewPager.setCurrentItem(3, false);
-                // else if (mViewPagerCurrentPosition == 4) viewPager.setCurrentItem(1, false);
-                if (mViewPagerCurrentPosition == 1) viewPager.setCurrentItem(4, false);
-                else if (mViewPagerCurrentPosition == 5) viewPager.setCurrentItem(2, false);
-            }
-        });
-
-        FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
-        FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
-        Button btnHistory = (Button) findViewById(R.id.btn_history);
-
-        CarouselView cvNewAssets = (CarouselView) findViewById(R.id.carousel_new_assets);
-
-        cvNewAssets.setPageCount(1);
-        cvNewAssets.setImageListener(((position, imageView) -> {
-            imageView.setColorFilter(getResources().getColor(R.color.cardview_dark_background));
-        }));
+        // FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
+        // FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
+        // Button btnHistory = (Button) findViewById(R.id.btn_history);
 
         // utilities
         retrofit = RetrofitManager.instance.create(RetrofitManager.class);
@@ -201,78 +177,41 @@ public class MainActivity extends AppCompatActivity {
 
         ivToken.setOnClickListener(view -> {
             if (mUser == null) return;
-            setProgressBarVisible(true);
+            // setProgressBarVisible(true);
             retrofit.getAirdrop(new AddressBody(mUser.getAddress()))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(response -> {
                         tvBalance.setText(String.format(Locale.KOREA, "%d", response.getBalance()));
-                        setProgressBarVisible(false);
+                        updateAppIconBadge(response.getBalance());
+                        // setProgressBarVisible(false);
                     }, Throwable::printStackTrace);
         });
 
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    // TODO("Update Address");
-                }
-            }
-        });
-
-        mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
-                .orderByChild("orderKey")
-                .limitToFirst(3)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        ArrayList<Asset> assets = new ArrayList<>();
-                        for (DataSnapshot child: dataSnapshot.getChildren()) {
-                            Asset asset = child.getValue(Asset.class);
-                            if (asset != null) assets.add(asset);
-                        }
-                        // FIXME a better way
-                        int idx = 1;
-                        for (DataSnapshot child: dataSnapshot.getChildren()) {
-                            Asset asset = child.getValue(Asset.class);
-                            if (idx == 1) assets.add(asset);
-                            else if (idx == 2) {
-                                assets.add(asset);
-                                assets.add(0, asset);
-                            }
-                            else if (idx == 3) assets.add(1, asset);
-                            idx += 1;
-                        }
-                        cardAdapter.addItems(assets);
-                        viewPager.getAdapter().notifyDataSetChanged();
-                        // viewPager.setCurrentItem(1);
-                        viewPager.setCurrentItem(2);
-                        initCarouselView(cvNewAssets, assets.subList(2, 5));
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        databaseError.toException().printStackTrace();
-                    }
-                });
-
+        /*
         fabRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
+        */
 
+        /*
         btnHistory.setOnClickListener(view -> {
             Intent intent = new Intent(this, MyAssetActivity.class);
             startActivity(intent);
         });
+        */
 
+        /*
         fabSearch.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         });
+        */
     }
 
     // TODO("customize progress bar")
+    /*
     private void setProgressBarVisible(boolean isVisible) {
         if (isVisible) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -282,32 +221,55 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(ProgressBar.GONE);
         }
     }
+    */
 
-    private void initCarouselView(CarouselView view, List<Asset> assets) {
-        ImageListener imageListener = new ImageListener() {
-            @Override
-            public void setImageForPosition(int position, ImageView imageView) {
-                Asset asset = assets.get(position);
-                Picasso.get()
-                        .load(asset.imageUrl)
-                        .placeholder(R.color.cardview_dark_background)
-                        .fit()
-                        .centerCrop()
-                        .into(imageView);
-            }
-        };
-        ImageClickListener imageClickListener = new ImageClickListener() {
-            @Override
-            public void onClick(int position) {
-                Asset asset = assets.get(position);
-                Toast.makeText(MainActivity.this, "Asset: " + asset.name, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, AssetActivity.class)
-                        .putExtra("asset", asset);
+    // NavigationView.OnNavigationItemSelectedListener
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Intent intent = new Intent();
+        switch (item.getItemId()) {
+            // NavigationView
+            case R.id.nav_item_my_assets:
+                intent.setClass(this, MyAssetActivity.class);
                 startActivity(intent);
-            }
-        };
-        view.setImageListener(imageListener);
-        view.setImageClickListener(imageClickListener);
-        view.setPageCount(assets.size());
+                break;
+            case R.id.nav_item_register:
+                intent.setClass(this, RegisterActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_item_search:
+                intent.setClass(this, SearchActivity.class);
+                startActivity(intent);
+                break;
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    // TabLayout.OnTabSelectedListener
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+
+    // https://medium.com/marojuns-android/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EC%95%84%EC%9D%B4%EC%BD%98-%EB%B1%83%EC%A7%80-%EC%99%84%EC%A0%84%EB%B6%84%ED%95%B4-c27028014e4d
+    private void updateAppIconBadge(int count) {
+        /*
+        Intent intent = new Intent("android.intent.action.BADGE_COUND_UPDATE");
+        intent.putExtra("badge_count_package_name", getComponentName().getPackageName());
+        intent.putExtra("badge_count_class_name", getComponentName().getClassName());
+        intent.putExtra("badge_count", count);
+        sendBroadcast(intent);
+        */
     }
 }
