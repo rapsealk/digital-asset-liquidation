@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rapsealk.digital_asset_liquidation.AssetAdapter;
 import com.rapsealk.digital_asset_liquidation.GlobalVariable;
+import com.rapsealk.digital_asset_liquidation.MainActivity;
 import com.rapsealk.digital_asset_liquidation.R;
 import com.rapsealk.digital_asset_liquidation.struct.Asset;
 
@@ -88,11 +89,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Va
             mAdapter.addItem(asset);
         }
         mAdapter.notifyDataSetChanged();
+        ((MainActivity) getActivity()).setProgressBarVisible(false);
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
-
+        ((MainActivity) getActivity()).setProgressBarVisible(false);
     }
 
     // View.OnClickListener
@@ -107,6 +109,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Va
     }
 
     private void updateAssetListView() {
+        ((MainActivity) getActivity()).setProgressBarVisible(true);
         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
                 // .equalTo("category/major", majorCategory)
                 // .equalTo("category/minor", minorCategory)

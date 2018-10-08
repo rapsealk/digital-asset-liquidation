@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rapsealk.digital_asset_liquidation.GlobalVariable;
+import com.rapsealk.digital_asset_liquidation.MainActivity;
 import com.rapsealk.digital_asset_liquidation.R;
 import com.rapsealk.digital_asset_liquidation.adapter.CardPagerAdapter;
 import com.rapsealk.digital_asset_liquidation.struct.Asset;
@@ -67,6 +68,7 @@ public class MainFragment extends Fragment implements ViewPager.OnPageChangeList
     }
 
     private void loadAssetsPreview(ViewPager viewPager, CardPagerAdapter adapter) {
+        ((MainActivity) getActivity()).setProgressBarVisible(true);
         mFirebaseDatabase.getReference(GlobalVariable.DATABASE_ASSET)
                 .orderByChild("orderKey")
                 .limitToFirst(3)
@@ -94,11 +96,13 @@ public class MainFragment extends Fragment implements ViewPager.OnPageChangeList
                         viewPager.getAdapter().notifyDataSetChanged();
                         // viewPager.setCurrentItem(1);
                         viewPager.setCurrentItem(2);
+                        ((MainActivity) getActivity()).setProgressBarVisible(false);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         databaseError.toException().printStackTrace();
+                        ((MainActivity) getActivity()).setProgressBarVisible(false);
                     }
                 });
     }

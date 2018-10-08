@@ -11,9 +11,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +29,7 @@ import com.rapsealk.digital_asset_liquidation.view.SwipableViewPager;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity
@@ -45,8 +47,7 @@ public class MainActivity extends AppCompatActivity
 
     private SwipableViewPager mViewPager;
 
-    // private ProgressBar progressBar;
-    private TextView tvEmail;
+    private ProgressBar mProgressBar;
     private TextView tvAddress;
     private TextView tvBalance;
 
@@ -94,17 +95,11 @@ public class MainActivity extends AppCompatActivity
         if (mFirebaseUser != null) {
             // setProgressBarVisible(true);
             mUser = sharedPreferenceManager.getUser();
-            Log.d(TAG, "user: " + mUser);
-            tvEmail.setText(mFirebaseUser.getEmail());
             tvAddress.setText(mUser.getAddress());
 
             mNavigationAddress.setText(mUser.getAddress());
 
-            tvEmail.setOnClickListener(view -> {
-                mFirebaseAuth.signOut();
-            });
-
-            retrofit.balanceOf(mUser.getAddress())
+            Disposable api = retrofit.balanceOf(mUser.getAddress())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(balanceResponse -> {
@@ -112,8 +107,6 @@ public class MainActivity extends AppCompatActivity
                         updateAppIconBadge(balanceResponse.getBalance());
                         // setProgressBarVisible(false);
                     });
-        } else {
-            tvEmail.setOnClickListener(null);
         }
     }
 
@@ -130,6 +123,8 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -160,16 +155,12 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationAddress = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_address);
 
-        tvEmail = (TextView) findViewById(R.id.tv_user_email);
         tvAddress = (TextView) findViewById(R.id.tv_address);
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ImageView ivToken = (ImageView) findViewById(R.id.iv_token);
 
-        // progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
         // FloatingActionButton fabRegister = (FloatingActionButton) findViewById(R.id.fab_register);
         // FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
-        // Button btnHistory = (Button) findViewById(R.id.btn_history);
 
         // utilities
         retrofit = RetrofitManager.instance.create(RetrofitManager.class);
@@ -177,27 +168,20 @@ public class MainActivity extends AppCompatActivity
 
         ivToken.setOnClickListener(view -> {
             if (mUser == null) return;
-            // setProgressBarVisible(true);
-            retrofit.getAirdrop(new AddressBody(mUser.getAddress()))
+            setProgressBarVisible(true);
+            Disposable api = retrofit.getAirdrop(new AddressBody(mUser.getAddress()))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(response -> {
                         tvBalance.setText(String.format(Locale.KOREA, "%d", response.getBalance()));
                         updateAppIconBadge(response.getBalance());
-                        // setProgressBarVisible(false);
+                        setProgressBarVisible(false);
                     }, Throwable::printStackTrace);
         });
 
         /*
         fabRegister.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-            startActivity(intent);
-        });
-        */
-
-        /*
-        btnHistory.setOnClickListener(view -> {
-            Intent intent = new Intent(this, MyAssetActivity.class);
             startActivity(intent);
         });
         */
@@ -210,18 +194,15 @@ public class MainActivity extends AppCompatActivity
         */
     }
 
-    // TODO("customize progress bar")
-    /*
-    private void setProgressBarVisible(boolean isVisible) {
+    public void setProgressBarVisible(boolean isVisible) {
         if (isVisible) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            progressBar.setVisibility(ProgressBar.VISIBLE);
+            mProgressBar.setVisibility(ProgressBar.VISIBLE);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            progressBar.setVisibility(ProgressBar.GONE);
+            mProgressBar.setVisibility(ProgressBar.GONE);
         }
     }
-    */
 
     // NavigationView.OnNavigationItemSelectedListener
     @Override

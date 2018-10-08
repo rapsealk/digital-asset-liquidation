@@ -1,6 +1,7 @@
 package com.rapsealk.digital_asset_liquidation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -63,6 +64,15 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> 
         int colorFilter = ContextCompat.getColor(mContext, colorId);
         onChainStatus.mutate().setColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
         holder.assetOnChain.setImageDrawable(onChainStatus);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, AssetActivity.class)
+                        .putExtra("asset", item);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

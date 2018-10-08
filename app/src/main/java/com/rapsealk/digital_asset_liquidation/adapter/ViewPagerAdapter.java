@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.rapsealk.digital_asset_liquidation.view.AssetFragment;
+import com.rapsealk.digital_asset_liquidation.view.SettingsFragment;
 import com.rapsealk.digital_asset_liquidation.view.MainFragment;
 import com.rapsealk.digital_asset_liquidation.view.SearchFragment;
 
@@ -33,7 +33,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return new SearchFragment();
             case 2:
-                return new AssetFragment();
+                return new SettingsFragment();
             default:
                 return null;
         }

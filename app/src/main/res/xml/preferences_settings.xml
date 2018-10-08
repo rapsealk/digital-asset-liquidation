@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="enableSettings"
+        android:summaryOff="설정을 허가하지 않습니다."
+        android:summaryOn="설정을 허가합니다."
+        android:title="설정 허가"/>
+    <EditTextPreference
+        android:defaultValue="@string/token_id"
+        android:dependency="enableSettings"
+        android:key="tokenSymbol"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="토큰 이름"/>
+    <!--ListPreference
+        android:defaultValue="0"
+        android:dependency="enableSettings"
+        android:entries="@array/major_key"
+        android:entryValues="@array/major_key"
+        android:key="filterAssets"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="자산 필터링"/-->
+</PreferenceScreen>

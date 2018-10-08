@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">digital-asset-liquidation</string>
+    <string name="token_id">DALs</string>
 
     <string name="title_permission">권한</string>
     <string name="description_permission">이 어플리케이션의 원활한 이용을 위하여 다음과 같은 권한이 필요합니다.</string>
@@ -27,4 +28,6 @@
     <string name="detail_post_time">등록일시</string>
 
     <string name="purchase_amount">구매량</string>
+
+    <string name="numeric_zero">0</string>
 </resources>

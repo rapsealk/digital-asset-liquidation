@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 
 import com.rapsealk.digital_asset_liquidation.R;
 
-public class AssetFragment extends Fragment {
+public class SettingsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_asset, container, false);
+        return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 }
