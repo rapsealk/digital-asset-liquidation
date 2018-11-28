@@ -4,20 +4,24 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.rapsealk.digital_asset_liquidation.struct.Asset;
-import com.rapsealk.digital_asset_liquidation.view.AnimatedRecyclerView;
+import com.rapsealk.digital_asset_liquidation.adapter.EthAssetAdapter;
+import com.rapsealk.digital_asset_liquidation.network.RetrofitManager;
+import com.rapsealk.digital_asset_liquidation.struct.EthAsset;
+import com.rapsealk.digital_asset_liquidation.struct.User;
+import com.rapsealk.digital_asset_liquidation.util.SharedPreferenceManager;
 
 import java.util.ArrayList;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by rapsealk on 2018. 5. 5..
@@ -28,7 +32,7 @@ public class MyAssetActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
-    private FirebaseDatabase mFirebaseDatabase;
+    // private FirebaseDatabase mFirebaseDatabase;
 
     private ProgressBar mProgressBar;
 
@@ -48,6 +52,13 @@ public class MyAssetActivity extends AppCompatActivity {
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        ArrayList<EthAsset> items = new ArrayList<>();
+        EthAssetAdapter adapter = new EthAssetAdapter(this, items);
+        recyclerView.setAdapter(adapter);
+        /*
         AnimatedRecyclerView animatedRecyclerView = (AnimatedRecyclerView) findViewById(R.id.animated_recycler_view);
         animatedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -82,6 +93,32 @@ public class MyAssetActivity extends AppCompatActivity {
                         Log.d(TAG, databaseError.toString());
                         setProgressBarVisibility(ProgressBar.GONE);
                     }
+                });
+        */
+
+        RetrofitManager retrofit = RetrofitManager.instance.create(RetrofitManager.class);
+        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+
+        User user = sharedPreferenceManager.getUser();
+
+        setProgressBarVisibility(ProgressBar.VISIBLE);
+        Disposable d = retrofit.getAssetsOf(user.getAddress())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(assetsResponse -> {
+                    for (EthAsset asset: assetsResponse.getAssets()) {
+                        Log.d(TAG, "==========================================");
+                        Log.d(TAG, "ID: " + asset.getId());
+                        Log.d(TAG, "Owner: " + asset.getOwner());
+                        Log.d(TAG, "Price: " + asset.getPrice());
+                        Log.d(TAG, "Total: " + asset.getTotalShare());
+                        Log.d(TAG, "Owning: " + asset.getOwningShare());
+                        Log.d(TAG, "Buyable: " + asset.getBuyableShare());
+                        Log.d(TAG, "==========================================");
+                    }
+                    adapter.addAll(assetsResponse.getAssets());
+                    adapter.notifyDataSetChanged();
+                    setProgressBarVisibility(ProgressBar.GONE);
                 });
     }
 

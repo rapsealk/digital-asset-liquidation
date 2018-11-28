@@ -1,4 +1,4 @@
-package com.rapsealk.digital_asset_liquidation;
+package com.rapsealk.digital_asset_liquidation.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rapsealk.digital_asset_liquidation.AssetActivity;
+import com.rapsealk.digital_asset_liquidation.R;
 import com.rapsealk.digital_asset_liquidation.struct.Asset;
 import com.squareup.picasso.Picasso;
 
